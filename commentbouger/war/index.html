@@ -1,45 +1,51 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<!-- The HTML 4.01 Transitional DOCTYPE declaration-->
-<!-- above set at the top of the file will set     -->
-<!-- the browser's rendering engine into           -->
-<!-- "Quirks Mode". Replacing this declaration     -->
-<!-- with a "Standards Mode" doctype is supported, -->
-<!-- but may lead to some differences in layout.   -->
-
+<!DOCTYPE html>
 <html>
   <head>
-    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <title>Comment bouger ?</title>
-    <script type="text/javascript" src="script.js"></script>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+      .bandeau{background-color: green; width: 100%; position: absolute; height: 5%;}
+      html { height: 100%; position: "absolute";}
+      body { height: 100%; margin: 0; padding: 0 }
+      #map-canvas { position: absolute; height: 90%; width: 65%; left: 35%; top:5%;}
+      #selecteur{position: absolute; height: 90%; width: 65%; left: 0%; top:5%;}
+      #bandeauBas {top: 95%;}
+      #bandeauHaut{top: 0%;}
+    </style>
+    <script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCty_tfQgPAUaz8zjBc9ckJ6oFfUH9EJlg&sensor=true">
+    </script>
+    <script type="text/javascript" src="script.js">     
+    </script>
   </head>
-
   <body>
-    <table>
-      <tr>
-        <td colspan="2" style="font-weight:bold;">Available Servlets:</td>        
-      </tr>
-      <tr>
-        <td><a href="carorbus">CarOrBus</a></td>
-      </tr>
-    </table>
-    
-    
-	<form>
-		<p> Depart : 
-		<input type="text" id="dep" name="dep"/></p>
-		<p> ArrivÃ©e : 
-		<input type="text" id="arr" name="arr"/></p>
-		<p>eviter les peages : <input type="checkbox" id="peage"/></p>
-		<p>eviter les autoroutes : <input type="checkbox" id="autoroute"/></p>
-		<input type="button" onclick="changer()"/>
-	</form>
-    <iframe
-  width="600"
-  height="450"
-  frameborder="0" style="border:0" id="map"
-  src="https://www.google.com/maps/embed/v1/view?key=AIzaSyCty_tfQgPAUaz8zjBc9ckJ6oFfUH9EJlg&center=37.4218,-122.0840&zoom=18&maptype=satellite">
-	</iframe>
-	
-	
+  	<div id="bandeauHaut" class="bandeau"></div>
+    <div id="selecteur">
+	    <table>
+	      <tr>
+	        <th colspan="4">Comment bouger ?</th>        
+	      </tr>
+	      <tr>
+		      <td colspan="4">
+		      	<form>
+					<p> Depart : 
+					<input type="text" id="dep" name="dep"/></p>
+					<p> Arrivée : 
+					<input type="text" id="arr" name="arr"/></p>
+					<p>eviter les peages : <input type="checkbox" id="peage"/></p>
+					<p>eviter les autoroutes : <input type="checkbox" id="autoroute"/></p>
+					<input type="button" onclick="changer()"/>
+				</form>
+		      </td>
+	      </tr>
+	      <tr>
+	        <td>En voiture :</td>
+	        <td>En transports en communs :</td>
+	        <td>En velo :</td>
+	        <td>En bicloo :</td>
+	      </tr>
+	    </table>
+    </div>
+    <div id="map-canvas"></div>
+    <div id="bandeauBas" class="bandeau"></div>
   </body>
 </html>

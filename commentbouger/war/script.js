@@ -1,6 +1,18 @@
+function initialize() {
+  	var posInit
+    var mapOptions = {
+      center: new google.maps.LatLng(47.2092934, -1.5476554),
+      zoom: 12
+    };
+    var map = new google.maps.Map(document.getElementById("map-canvas"),
+        mapOptions);
+  }
+google.maps.event.addDomListener(window, 'load', initialize);
+
+/*
 var src1 = 'https://www.google.com/maps/embed/v1/directions?key=AIzaSyCty_tfQgPAUaz8zjBc9ckJ6oFfUH9EJlg&origin=';
 var src2 = '&destination=';
-var src3 = '&mode=driving';
+var src3 = '&mode=walking';
 
 function changer(){
 	var map = document.getElementById('map');
@@ -20,4 +32,4 @@ function changer(){
 	var nouvSrc = src1 + dep + src2 + arr + src4 + src3;
 	map.src=nouvSrc;
 	
-}
+}*/
