@@ -9,19 +9,37 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <title>Hello App Engine</title>
+    <title>Comment bouger ?</title>
+    <script type="text/javascript" src="script.js"></script>
   </head>
 
   <body>
-    <h1>Hello App Engine!</h1>
-	
     <table>
       <tr>
         <td colspan="2" style="font-weight:bold;">Available Servlets:</td>        
       </tr>
       <tr>
-        <td><a href="commentbouger">Commentbouger</a></td>
+        <td><a href="carorbus">CarOrBus</a></td>
       </tr>
     </table>
+    
+    
+	<form>
+		<p> Depart : 
+		<input type="text" id="dep" name="dep"/></p>
+		<p> Arrivée : 
+		<input type="text" id="arr" name="arr"/></p>
+		<p>eviter les peages : <input type="checkbox" id="peage"/></p>
+		<p>eviter les autoroutes : <input type="checkbox" id="autoroute"/></p>
+		<input type="button" onclick="changer()"/>
+	</form>
+    <iframe
+  width="600"
+  height="450"
+  frameborder="0" style="border:0" id="map"
+  src="https://www.google.com/maps/embed/v1/view?key=AIzaSyCty_tfQgPAUaz8zjBc9ckJ6oFfUH9EJlg&center=37.4218,-122.0840&zoom=18&maptype=satellite">
+	</iframe>
+	
+	
   </body>
 </html>
