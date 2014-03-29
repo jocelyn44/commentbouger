@@ -4,14 +4,24 @@ var directionsService;
 var stepDisplay;
 var markerArray = [];
 
+function coordFromAdress(adress){
+	var coord = new google.maps.LatLng;
+	var request = {
+		      origin: start
+		  };
+	
+}
+
 function initialize() {
   // Instantiate a directions service.
   directionsService = new google.maps.DirectionsService();
 
-  // Create a map and center it on Manhattan.
-  var manhattan = new google.maps.LatLng(47.2092934, -1.5476554);
+  // Create a map and center it on Nantes.
+  //var manhattan = new google.maps.LatLng(47.218371, -1.553621);
+  var manhattan = new google.maps.LatLng(47.19631701,-1.54258325);
+  
   var mapOptions = {
-    zoom: 13,
+    zoom: 18,	
     center: manhattan
   }
   map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
@@ -89,66 +99,3 @@ function attachInstructionText(marker, text) {
 }
 
 google.maps.event.addDomListener(window, 'load', initialize);
-
-
-
-
-/*
-
-
-
-function initialize() {
-  	var posInit
-    var mapOptions = {
-      center: new google.maps.LatLng(47.2092934, -1.5476554),
-      zoom: 12
-    };
-    var map = new google.maps.Map(document.getElementById("map-canvas"),
-        mapOptions);
-  }
-google.maps.event.addDomListener(window, 'load', initialize);
-
-function changer(){
-	var map = document.getElementById("map-canvas");
-	
-}
-
-function calcRoute() {
-  var start = document.getElementById("dep").value;
-  var end = document.getElementById("arr").value;
-  var request = {
-    origin:start,
-    destination:end,
-    travelMode: google.maps.TravelMode.DRIVING
-  };
-  directionsService.route(request, function(result, status) {
-    if (status == google.maps.DirectionsStatus.OK) {
-      directionsDisplay.setDirections(result);
-    }
-  });
-}
-
-/*
-var src1 = 'https://www.google.com/maps/embed/v1/directions?key=AIzaSyCty_tfQgPAUaz8zjBc9ckJ6oFfUH9EJlg&origin=';
-var src2 = '&destination=';
-var src3 = '&mode=walking';
-
-function changer(){
-	var map = document.getElementById('map');
-	var dep = document.getElementById('dep').value;
-	var arr = document.getElementById('arr').value;
-	var auto = document.getElementById('autoroute').checked;
-	var peage= document.getElementById('peage').checked;
-	var src4 = "";
-	if(peage==true)
-		src4="&avoid=tolls";
-	if(auto==true){
-		if(src4=="")
-			src4="&avoid=highways";
-		else
-			src4+="|highways";
-	}
-	var nouvSrc = src1 + dep + src2 + arr + src4 + src3;
-	map.src=nouvSrc;
-	
-}*/

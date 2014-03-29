@@ -1,7 +1,9 @@
 package com.nantes.commentbouger;
 
 import java.io.IOException;
+
 import javax.servlet.http.*;
+
 
 @SuppressWarnings("serial")
 public class CommentbougerServlet extends HttpServlet {
@@ -10,4 +12,6 @@ public class CommentbougerServlet extends HttpServlet {
 		resp.setContentType("text/plain");
 		resp.getWriter().println("Hello, world");
 	}
+	
+	
 }
