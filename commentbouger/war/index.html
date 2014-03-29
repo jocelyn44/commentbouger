@@ -2,15 +2,7 @@
 <html>
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-    <style type="text/css">
-      .bandeau{background-color: green; width: 100%; position: absolute; height: 5%;}
-      html { height: 100%; position: "absolute";}
-      body { height: 100%; margin: 0; padding: 0 }
-      #map-canvas { position: absolute; height: 90%; width: 65%; left: 35%; top:5%;}
-      #selecteur{position: absolute; height: 90%; width: 65%; left: 0%; top:5%;}
-      #bandeauBas {top: 95%;}
-      #bandeauHaut{top: 0%;}
-    </style>
+    <LINK href="style.css" title="compact" rel="stylesheet" type="text/css">
     <script type="text/javascript"
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCty_tfQgPAUaz8zjBc9ckJ6oFfUH9EJlg&sensor=true">
     </script>
@@ -18,33 +10,31 @@
     </script>
   </head>
   <body>
-  	<div id="bandeauHaut" class="bandeau"></div>
-    <div id="selecteur">
-	    <table>
+  	<div id="selecteur">
+	    <form>
+			<p> Depart : 
+			<input type="text" id="dep" name="dep"/>
+			Arrivée : 
+			<input type="text" id="arr" name="arr"/>
+			<input value="GO" type="button" onclick="calcRoute();"/></p>
+			En voiture : <input type="checkbox" id="voiture" onclick="changerEtat()"/>
+			En bus / tram : <input type="checkbox" id="bus" onclick="changerEtat()"/>
+			En velo : <input type="checkbox" id="velo" onclick="changerEtat()"/>
+			En bicloo : <input type="checkbox" id="bicloo" onclick="changerEtat()"/>
+			A pieds : <input type="checkbox" id="pied" onclick="changerEtat()"/>
+		</form>
+    </div>
+    <div id="comparateur">
+    <table>
 	      <tr>
-	        <th colspan="4">Comment bouger ?</th>        
-	      </tr>
-	      <tr>
-		      <td colspan="4">
-		      	<form>
-					<p> Depart : 
-					<input type="text" id="dep" name="dep"/></p>
-					<p> Arrivée : 
-					<input type="text" id="arr" name="arr"/></p>
-					<p>eviter les peages : <input type="checkbox" id="peage"/></p>
-					<p>eviter les autoroutes : <input type="checkbox" id="autoroute"/></p>
-					<input type="button" onclick="calcRoute();"/>
-				</form>
-		      </td>
-	      </tr>
-	      <tr>
-	        <td>En voiture : <p id="tmpVoiture"></p></td>
-	        <td>En transports en communs :</td>
+	        <td>En voiture : </td>
+	        <td>Bus / tram :</td>
 	        <td>En velo :</td>
 	        <td>En bicloo :</td>
+	        <td>A pieds :</td>
 	      </tr>
 	    </table>
-    </div>
+	</div>
     <div id="map-canvas"></div>
     <div id="warnings_panel" style="width:100%;height:10%;text-align:center"></div>
     <div id="bandeauBas" class="bandeau"></div>

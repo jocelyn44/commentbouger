@@ -1,0 +1,9 @@
+ .bandeau{background-color: white; width: 100%; position: absolute; height: 0%;}
+ html { height: 100%; position: "absolute";}
+ body { height: 100%; margin: 0; padding: 0 }
+ #map-canvas { position: absolute; height: 100%; width: 100%; z-index: 1;}
+ #selecteur{position: absolute; height: 10%; width: 500px; left: 35%; top:0%; z-index: 2; opacity: 0.3; transition: all 1s}
+ #selecteur:hover{background-color: white; opacity: 1; transition:all 1s;}
+ #bandeauBas {top: 0%; z-index: 2; transition:all 1s; top:100%; opacity:0;}
+ #comparateur{position:absolute;}
+ 

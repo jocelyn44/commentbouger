@@ -36,6 +36,31 @@ function initialize() {
   stepDisplay = new google.maps.InfoWindow();
 }
 
+function changerEtat(){
+	var nbTrue=0;
+	if(document.getElementById("voiture").checked==true)
+		nbTrue+=1;
+	if(document.getElementById("bus").checked==true)
+		nbTrue+=1;
+	if(document.getElementById("velo").checked==true)
+		nbTrue+=1;
+	if(document.getElementById("bicloo").checked==true)
+		nbTrue+=1;
+	if(document.getElementById("pied").checked==true)
+		nbTrue+=1;
+	if(nbTrue>0){
+		document.getElementById("bandeauBas").style.height="10%";
+		document.getElementById("bandeauBas").style.top="90%";
+		document.getElementById("bandeauBas").style.opacity="1";
+	}
+	else{
+		document.getElementById("bandeauBas").style.height="0%";
+		document.getElementById("bandeauBas").style.top="100%";
+		document.getElementById("bandeauBas").style.opacity="0";
+	}
+	
+}
+
 function calcRoute() {
 
   // First, remove any existing markers from the map.
