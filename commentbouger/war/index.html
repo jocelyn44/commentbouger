@@ -16,12 +16,14 @@
 			<input type="text" id="dep" name="dep"/>
 			<input type="text" id="arr" name="arr"/>
 			<img src="img/drapRouge.png" alt="Arrivée :"/>
-			<input value="GO" type="button" onclick="calcRoute()"/><br/>
-			<img src="img/voiture.png" alt="En voiture :"/> <input type="checkbox" id="voiture" onclick="changerEtat()"/>
-			<img src="img/bus.png" alt="En bus / tram :"/> <input type="checkbox" id="bus" onclick="changerEtat()"/>
-			<img src="img/velo.png" alt="En velo :"/> <input type="checkbox" id="velo" onclick="changerEtat()"/>
-			<img src="img/velo.png" alt="En bicloo :"/> <input type="checkbox" id="bicloo" onclick="changerEtat()"/>
-			<img src="img/pied.png" alt="A pieds :"/> <input type="checkbox" id="pied" onclick="changerEtat()"/></p>
+			<input value="GO" type="button" onclick="calcRoute()"/>
+			<p align="center" style="position:center;">
+			<img src="img/voiture.png" alt="En voiture :" id="checkVoiture" onclick="changerApparence('checkVoiture')"/>
+			<img src="img/bus.png" alt="En bus / tram :" id="checkBus" onclick="changerApparence('checkBus')"/> 
+			<img src="img/velo.png" alt="En velo :" id="checkVelo" onclick="changerApparence('checkVelo')"/> 
+			<img src="img/velo.png" alt="En bicloo :" id="checkBicloo" onclick="changerApparence('checkBicloo')"/>
+			<img src="img/pied.png" alt="A pieds :" id="checkPied" onclick="changerApparence('checkPied')"/>
+			</p> 
 		</form>
     </div>
     <div id="comparateur">

@@ -3,6 +3,12 @@ var directionsDisplay;
 var directionsService;
 var stepDisplay;
 var markerArray = [];
+var voiture = document.getElementById("voiture");
+var bus = document.getElementById("bus");
+var velo = document.getElementById("velo");
+var bicloo = document.getElementById("bicloo");
+var pied = document.getElementById("pied");
+var nb;
 
 function coordFromAdress(adress){
 	var coord = new google.maps.LatLng;
@@ -12,7 +18,9 @@ function coordFromAdress(adress){
 
 }
 
+
 function initialize() {
+	nb=0;
   // Instantiate a directions service.
   directionsService = new google.maps.DirectionsService();
 
@@ -36,21 +44,20 @@ function initialize() {
   stepDisplay = new google.maps.InfoWindow();
 }
 
-function changerEtat(){
-	var nbTrue=0;
-	if(document.getElementById("voiture").checked==true)
-		nbTrue+=1;
-	if(document.getElementById("bus").checked==true)
-		nbTrue+=1;
-	if(document.getElementById("velo").checked==true)
-		nbTrue+=1;
-	if(document.getElementById("bicloo").checked==true)
-		nbTrue+=1;
-	if(document.getElementById("pied").checked==true)
-		nbTrue+=1;
-	if(nbTrue>0){
-		document.getElementById("bandeauBas").style.height="10%";
-		document.getElementById("bandeauBas").style.top="90%";
+function changerApparence(quoi){
+	var elem =document.getElementById(quoi);
+	if(elem.border!="3"){
+		elem.border="3";
+		nb+=1;
+	}
+	else{
+		elem.border="0";
+		nb-=1;
+	}
+	
+	if(nb>0){
+		document.getElementById("bandeauBas").style.height="250px";
+		document.getElementById("bandeauBas").style.top="85%";
 		document.getElementById("bandeauBas").style.opacity="1";
 	}
 	else{
@@ -58,11 +65,37 @@ function changerEtat(){
 		document.getElementById("bandeauBas").style.top="100%";
 		document.getElementById("bandeauBas").style.opacity="0";
 	}
-
+	
+	if(nb>0){
+		var start = document.getElementById('dep').value;
+		var end = document.getElementById('arr').value;
+		var affRes = document.getElementById("bandeauBas");
+		var resHtml=("<table border='1' style='border-collapse:collapse;'><tr><th>Mode</th><th>Distance</th><th>Duree</th><th>Prix</th></tr>");
+		if(document.getElementById("checkVoiture").border="3"){
+			  var duree;
+			  var dist;
+			  var request = {
+			      origin: start,
+			      destination: end,
+			      travelMode: google.maps.TravelMode.DRIVING
+			  };
+			  directionsService.route(request, function(response, status) {
+			    if (status == google.maps.DirectionsStatus.OK) {
+			      dist = response.routes[0].legs[0].distance.text;
+			      duree= response.routes[0].legs[0].duration.text;
+			      resHtml+=("<tr><td>Voiture</td><td>"+dist+"</td><td>"+duree+"</td><td>rab</td></tr>");
+			    }
+			  });
+			
+		}
+		resHtml+=("</table>");;
+		affRes.innerHTML=resHtml;
+	}
 }
 
 function calcRoute() {
 
+	
   // First, remove any existing markers from the map.
   for (var i = 0; i < markerArray.length; i++) {
     markerArray[i].setMap(null);
