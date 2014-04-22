@@ -78,8 +78,7 @@ function calcRoute() {
   var request = {
       origin: start,
       destination: end,
-      travelMode: google.maps.TravelMode.DRIVING,
-      map: map
+      travelMode: google.maps.TravelMode.DRIVING
   };
 
   // Route the directions and pass the response to a
@@ -100,7 +99,7 @@ function showSteps(directionResult,affAll) {
   // can keep track of it and remove it when calculating new
   // routes.
   var myRoute = directionResult.routes[0].legs[0];
-  if(affAll=="non"){
+  if(1){
 	  for (var i = 0; i < myRoute.steps.length; i++) {
 	    if(i==0 && i==myRoute.steps.length-1){
 			  var marker = new google.maps.Marker({
