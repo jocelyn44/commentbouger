@@ -11,17 +11,17 @@
   </head>
   <body>
   	<div id="selecteur">
-	    <form>
-			<p> Depart : 
+	    <form action="commentbouger">
+			<p style="position:relative;left:5px;"> <img src="img/drapVert.png" alt="Départ :"/>
 			<input type="text" id="dep" name="dep"/>
-			Arrivée : 
 			<input type="text" id="arr" name="arr"/>
-			<input value="GO" type="button" onclick="calcRoute();"/></p>
-			En voiture : <input type="checkbox" id="voiture" onclick="changerEtat()"/>
-			En bus / tram : <input type="checkbox" id="bus" onclick="changerEtat()"/>
-			En velo : <input type="checkbox" id="velo" onclick="changerEtat()"/>
-			En bicloo : <input type="checkbox" id="bicloo" onclick="changerEtat()"/>
-			A pieds : <input type="checkbox" id="pied" onclick="changerEtat()"/>
+			<img src="img/drapRouge.png" alt="Arrivée :"/>
+			<input value="GO" type="submit" onclick="calcRoute();"/><br/>
+			<img src="img/voiture.png" alt="En voiture :"/> <input type="checkbox" id="voiture" onclick="changerEtat()"/>
+			<img src="img/bus.png" alt="En bus / tram :"/> <input type="checkbox" id="bus" onclick="changerEtat()"/>
+			<img src="img/velo.png" alt="En velo :"/> <input type="checkbox" id="velo" onclick="changerEtat()"/>
+			<img src="img/velo.png" alt="En bicloo :"/> <input type="checkbox" id="bicloo" onclick="changerEtat()"/>
+			<img src="img/pied.png" alt="A pieds :"/> <input type="checkbox" id="pied" onclick="changerEtat()"/></p>
 		</form>
     </div>
     <div id="comparateur">
@@ -33,10 +33,16 @@
 	        <td>En bicloo :</td>
 	        <td>A pieds :</td>
 	      </tr>
+	      <tr>
+	      	<td></td>
+	      	<td></td>
+	      	<td><a href="commentbouger">blabla</a></td>
+	      	<td id="tmpPieds"></td>
+	      </tr>
 	    </table>
 	</div>
     <div id="map-canvas"></div>
     <div id="warnings_panel" style="width:100%;height:10%;text-align:center"></div>
-    <div id="bandeauBas" class="bandeau"></div>
+    <div id="bandeauBas" class="bandeau"><input type="button" onclick="placeMarker(47.19631701,-1.54258325,'red','bla');"/></div>
   </body>
 </html>

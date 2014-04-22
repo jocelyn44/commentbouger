@@ -9,7 +9,7 @@ function coordFromAdress(adress){
 	var request = {
 		      origin: start
 		  };
-	
+
 }
 
 function initialize() {
@@ -58,7 +58,7 @@ function changerEtat(){
 		document.getElementById("bandeauBas").style.top="100%";
 		document.getElementById("bandeauBas").style.opacity="0";
 	}
-	
+
 }
 
 function calcRoute() {
@@ -78,7 +78,8 @@ function calcRoute() {
   var request = {
       origin: start,
       destination: end,
-      travelMode: google.maps.TravelMode.DRIVING
+      travelMode: google.maps.TravelMode.DRIVING,
+      map: map
   };
 
   // Route the directions and pass the response to a
@@ -122,5 +123,18 @@ function attachInstructionText(marker, text) {
     stepDisplay.open(map, marker);
   });
 }
+
+function placeMarker(coordX, coordY){
+	var loc = new google.maps.LatLng(coordX, coordY);
+		  var marker = new google.maps.Marker({
+		    position: loc,
+		    map: map,
+		  });
+		  var infowindow = new google.maps.InfoWindow({
+		    content: 'Latitude: ' + loc.lat() + '<br>Longitude: ' + loc.lng()
+		  });
+		  infowindow.open(map,marker);
+}
+
 
 google.maps.event.addDomListener(window, 'load', initialize);
