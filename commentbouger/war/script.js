@@ -110,31 +110,7 @@ function changerApparence(quoi){
 			document.getElementById("bandeauBas").style.opacity="0";
 			directionsDisplay.setDirections({routes: []});
 		}
-		
-		/*if(nb>0){
-			var start = document.getElementById('dep').value;
-			var end = document.getElementById('arr').value;
-			var affRes = document.getElementById("bandeauBas");
-			var resHtml=("<table border='1' style='border-collapse:collapse;'><tr><th>Mode</th><th>Distance</th><th>Duree</th><th>Prix</th></tr>");
-			if(document.getElementById("checkVoiture").border=="3"){
-				  var duree;
-				  var dist;
-				  var request = {
-				      origin: start,
-				      destination: end,
-				      travelMode: google.maps.TravelMode.DRIVING
-				  };
-				  directionsService.route(request, function(response, status) {
-				    if (status == google.maps.DirectionsStatus.OK) {
-				      dist = response.routes[0].legs[0].distance.text;
-				      duree= response.routes[0].legs[0].duration.text;
-				      resHtml+=("<tr><td>Voiture</td><td>"+dist+"</td><td>"+duree+"</td><td>rab</td></tr>");
-				    }
-					resHtml+=("</table>");
-					affRes.innerHTML=resHtml;
-				  });
-			}
-		}*/
+
 	}
 }
 function calcRoute() {
