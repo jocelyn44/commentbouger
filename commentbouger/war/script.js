@@ -47,94 +47,96 @@ function initialize() {
 function changerApparence(quoi){
 	var elems = [document.getElementById("checkVoiture"),document.getElementById("checkBus"),document.getElementById("checkVelo"),document.getElementById("checkBicloo"),document.getElementById("checkPied")];
 	var i=0;
-	for(i=0;i<elems.length;i++){
-		if(elems[i].id==quoi && elems[i].border!="3"){
-			nb+=1;
-			elems[i].border="3";
-			
-			
+
+	var start = document.getElementById('dep').value;
+	var end = document.getElementById('arr').value;
+	if(end !="" && start!=""){
+		for(i=0;i<elems.length;i++){
+			if(elems[i].id==quoi && elems[i].border!="3"){
+				nb+=1;
+				elems[i].border="3";
+				
+				
+				var affRes = document.getElementById("bandeauBas");
+				var mode, modeFR;
+				if(elems[i].id=="checkVoiture"){mode = google.maps.TravelMode.DRIVING;modeFR="Voiture";}
+				if(elems[i].id=="checkVelo"){mode = google.maps.TravelMode.BICYCLING;modeFR="Velo";}
+				if(elems[i].id=="checkPied"){mode = google.maps.TravelMode.WALKING;modeFR="A pied";}
+				var resHtml=("<table border='1' style='border-collapse:collapse;'><tr><th>Mode</th><th>Distance</th><th>Duree</th><th>Prix</th></tr>");
+				if(nb>0){
+					  var duree;
+					  var dist;
+					  var request = {
+					      origin: start,
+					      destination: end,
+					      travelMode: mode
+					  };
+					  directionsService.route(request, function(response, status) {
+					    if (status == google.maps.DirectionsStatus.OK) {
+					      dist = response.routes[0].legs[0].distance.text;
+					      duree= response.routes[0].legs[0].duration.text;
+					      resHtml+=("<tr><td>"+modeFR+"</td><td>"+dist+"</td><td>"+duree+"</td><td>rab</td></tr>");
+					      var warnings = document.getElementById('warnings_panel');
+					      warnings.innerHTML = '<b>' + response.routes[0].warnings + '</b>';
+					      directionsDisplay.setDirections(response);
+					      showSteps(response,"non");
+					    }
+						resHtml+=("</table>");
+						affRes.innerHTML=resHtml;
+					  });
+				}
+			}
+			else if(elems[i].id==quoi && elems[i].border=="3"){
+				nb-=1;
+				elems[i].border="0";
+			}
+			else if(elems[i].border=="3"){
+				nb-=1;
+				elems[i].border="0";
+			}
+			else{
+				elems[i].border="0";
+			}
+		}	
+		
+		if(nb>0){
+			document.getElementById("bandeauBas").style.height="250px";
+			document.getElementById("bandeauBas").style.top="85%";
+			document.getElementById("bandeauBas").style.opacity="1";
+		}
+		else{
+			document.getElementById("bandeauBas").style.height="0%";
+			document.getElementById("bandeauBas").style.top="100%";
+			document.getElementById("bandeauBas").style.opacity="0";
+			directionsDisplay.setDirections({routes: []});
+		}
+		
+		/*if(nb>0){
 			var start = document.getElementById('dep').value;
 			var end = document.getElementById('arr').value;
 			var affRes = document.getElementById("bandeauBas");
-			var mode, modeFR;
-			if(elems[i].id=="checkVoiture"){mode = google.maps.TravelMode.DRIVING;modeFR="Voiture";}
-			if(elems[i].id=="checkVelo"){mode = google.maps.TravelMode.BICYCLING;modeFR="Velo";}
-			if(elems[i].id=="checkPied"){mode = google.maps.TravelMode.WALKING;modeFR="A pied";}
 			var resHtml=("<table border='1' style='border-collapse:collapse;'><tr><th>Mode</th><th>Distance</th><th>Duree</th><th>Prix</th></tr>");
-			if(nb>0){
+			if(document.getElementById("checkVoiture").border=="3"){
 				  var duree;
 				  var dist;
 				  var request = {
 				      origin: start,
 				      destination: end,
-				      travelMode: mode
+				      travelMode: google.maps.TravelMode.DRIVING
 				  };
 				  directionsService.route(request, function(response, status) {
 				    if (status == google.maps.DirectionsStatus.OK) {
 				      dist = response.routes[0].legs[0].distance.text;
 				      duree= response.routes[0].legs[0].duration.text;
-				      resHtml+=("<tr><td>"+modeFR+"</td><td>"+dist+"</td><td>"+duree+"</td><td>rab</td></tr>");
-				      var warnings = document.getElementById('warnings_panel');
-				      warnings.innerHTML = '<b>' + response.routes[0].warnings + '</b>';
-				      directionsDisplay.setDirections(response);
-				      showSteps(response,"non");
+				      resHtml+=("<tr><td>Voiture</td><td>"+dist+"</td><td>"+duree+"</td><td>rab</td></tr>");
 				    }
 					resHtml+=("</table>");
 					affRes.innerHTML=resHtml;
 				  });
 			}
-		}
-		else if(elems[i].id==quoi && elems[i].border=="3"){
-			nb-=1;
-			elems[i].border="0";
-		}
-		else if(elems[i].border=="3"){
-			nb-=1;
-			elems[i].border="0";
-		}
-		else{
-			elems[i].border="0";
-		}
-	}	
-	
-	if(nb>0){
-		document.getElementById("bandeauBas").style.height="250px";
-		document.getElementById("bandeauBas").style.top="85%";
-		document.getElementById("bandeauBas").style.opacity="1";
+		}*/
 	}
-	else{
-		document.getElementById("bandeauBas").style.height="0%";
-		document.getElementById("bandeauBas").style.top="100%";
-		document.getElementById("bandeauBas").style.opacity="0";
-		directionsDisplay.setDirections({routes: []});
-	}
-	
-	/*if(nb>0){
-		var start = document.getElementById('dep').value;
-		var end = document.getElementById('arr').value;
-		var affRes = document.getElementById("bandeauBas");
-		var resHtml=("<table border='1' style='border-collapse:collapse;'><tr><th>Mode</th><th>Distance</th><th>Duree</th><th>Prix</th></tr>");
-		if(document.getElementById("checkVoiture").border=="3"){
-			  var duree;
-			  var dist;
-			  var request = {
-			      origin: start,
-			      destination: end,
-			      travelMode: google.maps.TravelMode.DRIVING
-			  };
-			  directionsService.route(request, function(response, status) {
-			    if (status == google.maps.DirectionsStatus.OK) {
-			      dist = response.routes[0].legs[0].distance.text;
-			      duree= response.routes[0].legs[0].duration.text;
-			      resHtml+=("<tr><td>Voiture</td><td>"+dist+"</td><td>"+duree+"</td><td>rab</td></tr>");
-			    }
-				resHtml+=("</table>");
-				affRes.innerHTML=resHtml;
-			  });
-		}
-	}*/
 }
-
 function calcRoute() {
 
 	
