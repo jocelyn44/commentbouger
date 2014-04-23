@@ -45,15 +45,25 @@ function initialize() {
 }
 
 function changerApparence(quoi){
-	var elem =document.getElementById(quoi);
-	if(elem.border!="3"){
-		elem.border="3";
-		nb+=1;
-	}
-	else{
-		elem.border="0";
-		nb-=1;
-	}
+	var elems = [document.getElementById("checkVoiture"),document.getElementById("checkBus"),document.getElementById("checkVelo"),document.getElementById("checkBicloo"),document.getElementById("checkPied")];
+	var i=0;
+	for(i=0;i<elems.length;i++){
+		if(elems[i].id==quoi && elems[i].border!="3"){
+			nb+=1;
+			elems[i].border="3";
+		}
+		else if(elems[i].id==quoi && elems[i].border=="3"){
+			nb-=1;
+			elems[i].border="0";
+		}
+		else if(elems[i].border=="3"){
+			nb-=1;
+			elems[i].border="0";
+		}
+		else{
+			elems[i].border="0";
+		}
+	}	
 	
 	if(nb>0){
 		document.getElementById("bandeauBas").style.height="250px";
@@ -71,7 +81,7 @@ function changerApparence(quoi){
 		var end = document.getElementById('arr').value;
 		var affRes = document.getElementById("bandeauBas");
 		var resHtml=("<table border='1' style='border-collapse:collapse;'><tr><th>Mode</th><th>Distance</th><th>Duree</th><th>Prix</th></tr>");
-		if(document.getElementById("checkVoiture").border="3"){
+		if(document.getElementById("checkVoiture").border=="3"){
 			  var duree;
 			  var dist;
 			  var request = {
@@ -85,11 +95,11 @@ function changerApparence(quoi){
 			      duree= response.routes[0].legs[0].duration.text;
 			      resHtml+=("<tr><td>Voiture</td><td>"+dist+"</td><td>"+duree+"</td><td>rab</td></tr>");
 			    }
+				resHtml+=("</table>");
+				affRes.innerHTML=resHtml;
 			  });
 			
 		}
-		resHtml+=("</table>");;
-		affRes.innerHTML=resHtml;
 	}
 }
 
@@ -144,7 +154,7 @@ function showSteps(directionResult,affAll) {
 	    }
 	  }
   }
-  document.getElementById("tmpVoiture").innerText=myRoute.duration.text;
+  
 }
 
 function attachInstructionText(marker, text) {
