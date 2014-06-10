@@ -18,11 +18,19 @@ public class Commun {
 			URL u = new URL(req);
 			try {
 				BufferedReader reader = new BufferedReader(new InputStreamReader(u.openStream()));
-				String rep = reader.toString();
-				String[] vals = rep.split("value>");
-				rep = vals[3];
-				vals=rep.split("<value");
-				res=Double.parseDouble(vals[0]);
+				String line;
+
+		        while ((line = reader.readLine()) != null) {
+		            if(line.contains("<distance>")){
+		            	line =reader.readLine();
+		            	if(line.contains("<value>")){
+		    				String[]vals=line.split("<value>");
+		    				vals=vals[1].split("</value>");
+		    				res=Double.parseDouble(vals[0]);
+		            	}
+		            }
+		        }
+		        reader.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
