@@ -2,7 +2,7 @@
  html { height: 100%; position: "absolute";}
  body { height: 100%; margin: 0; padding: 0 }
  #map-canvas { position: absolute; height: 100%; width: 100%; z-index: 1;}
- #selecteur{position: absolute; height: 100px; width: 450px; left: 35%; top:0%; z-index: 2; opacity: 0.3; transition: all 1s;}
+ #selecteur{position: absolute; height: 100px; width: 400px; left: 35%; top:0%; z-index: 2; opacity: 0.3; transition: all 1s;}
  #selecteur:hover{background-color: transparent; opacity: 1; transition:all 1s;}
  #bandeauBas {top: 0%; z-index: 2; transition:all 1s; top:100%; opacity:0;}
  #comparateur{position:absolute;}
