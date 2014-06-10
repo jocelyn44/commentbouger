@@ -52,7 +52,7 @@ public class Bicloo {
 	
 	//cette fonction retourne vrai si la station 1 est plus proche que la station 2 du point de reference
 	public boolean plusPres(double Xref, double Yref, double X1, double Y1, double X2, double Y2){
-		return Commun.getDistance(Xref, Yref, X1, Y1)<Commun.getDistance(Xref, Yref, X2, Y2);
+		return Commun.getDistanceOffline(Xref, Yref, X1, Y1)<Commun.getDistanceOffline(Xref, Yref, X2, Y2);
 	}
 	
 	// cette fonction permet de trouver la station bicloo la plus proche.
@@ -65,16 +65,16 @@ public class Bicloo {
 	    racineElement = doc.getDocumentElement();
 	    
 	    //on recupere le noeud carto
-	    NodeList cartoList = racineElement.getElementsByTagName("carto");
+	    NodeList markersList = racineElement.getChildNodes();
 	    
 	    // on récupere toutes les stations
-	    NodeList stationsList = cartoList.item(0).getChildNodes();
+	    //NodeList stationsList = markersList.item(0).getChildNodes();
 		
 	    //pour chaque station on recherche la plus proche
-	    for(int i=0;i<stationsList.getLength();i++){
+	    for(int i=0;i<markersList.getLength();i++){
 	    	double lat,lng;
-	    	lat=Double.valueOf(stationsList.item(i).getChildNodes().item(4).getNodeValue());
-	    	lng=Double.valueOf(stationsList.item(i).getChildNodes().item(5).getNodeValue());
+	    	lat=Double.valueOf(markersList.item(i).getAttributes().getNamedItem("lat").getNodeValue());
+	    	lng=Double.valueOf(markersList.item(i).getAttributes().getNamedItem("lng").getNodeValue());
 	    	//si on est sur le premier noeud, on initialise les minis
 	    	if(first==true){
 	    		minLat=lat;

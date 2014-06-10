@@ -13,7 +13,7 @@ public class CommentbougerServlet extends HttpServlet {
 		resp.setContentType("text/plain");
 		resp.sendRedirect("index.html");
 		resp.getWriter().println(req.getParameter("dep"));
-		resp.getWriter().println(rab.findBiclooo(47.218371, -1.553621000000021));
+		resp.getWriter().println(rab.findBiclooo(47.23168880000001, -1.5594246000000567));
 	}
 	
 	
