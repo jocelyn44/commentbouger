@@ -1,10 +1,18 @@
 package com.nantes.commentbouger;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 public class Commun {
 	//cette fonction calcule la distance entre deux points GPS
@@ -53,4 +61,36 @@ public class Commun {
 	        return (deg * Math.PI / 180.0); }
 	private static double rad2deg(double rad) {
 	        return (rad / Math.PI * 180.0); } 
+	
+	// cette fonction permet de récupérer le XML proprement
+		public static Document getDocument(String chemin){
+			Document documentXML = null;
+		    
+		    // on parse le fichier
+		    try {
+		    File file = new File(chemin);
+			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder;
+			docBuilder = docBuilderFactory.newDocumentBuilder();
+			documentXML = docBuilder.parse(file);
+		    } 
+			catch (SAXException e) {
+				e.printStackTrace();
+				System.exit(0);
+			} 
+			catch (IOException e) {
+				e.printStackTrace();
+				System.exit(0);
+			}
+			catch (ParserConfigurationException e) {
+				e.printStackTrace();
+				System.exit(0);
+			}
+		    return documentXML;
+		}
+
+		//cette fonction retourne vrai si la station 1 est plus proche que la station 2 du point de reference
+		public static boolean plusPres(double Xref, double Yref, double X1, double Y1, double X2, double Y2){
+			return Commun.getDistanceOffline(Xref, Yref, X1, Y1)<Commun.getDistanceOffline(Xref, Yref, X2, Y2);
+		}
 }

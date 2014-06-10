@@ -1,21 +1,21 @@
 package com.nantes.commentbouger;
 
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-
-public class Bicloo {
-	private String chemin = "bicloo/carto.xml";
+public class Parking {
+	private String chemin = "parking/parking.xml";
 	private Document doc;
 	
-	public Bicloo (){
+	public Parking (){
 		doc = Commun.getDocument(chemin);
 		
 	}
 	
 	// cette fonction permet de trouver la station bicloo la plus proche.
-	public String findBiclooo(double coordX, double coordY){
+	public String findParking(double coordX, double coordY){
 		double minLat=0,minLong=0;
 		boolean first = true;
 		

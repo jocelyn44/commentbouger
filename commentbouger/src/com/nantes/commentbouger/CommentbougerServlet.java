@@ -9,11 +9,13 @@ import javax.servlet.http.*;
 public class CommentbougerServlet extends HttpServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
-		Bicloo rab=new Bicloo("bicloo/carto.xml");
+		Bicloo rab=new Bicloo();
+		Parking rabe=new Parking();
 		resp.setContentType("text/plain");
 		resp.sendRedirect("index.html");
 		resp.getWriter().println(req.getParameter("dep"));
 		resp.getWriter().println(rab.findBiclooo(47.23168880000001, -1.5594246000000567));
+		resp.getWriter().println(rabe.findParking(47.23168880000001, -1.5594246000000567));
 	}
 	
 	
