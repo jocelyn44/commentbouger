@@ -18,6 +18,7 @@ public class Parking {
 	public String findParking(double coordX, double coordY){
 		double minLat=0,minLong=0;
 		boolean first = true;
+		String nom="";
 		
 		//on prend le noeud racine
 		Element racineElement;
@@ -39,14 +40,16 @@ public class Parking {
 	    		minLat=lat;
 	    		minLong=lng;
 	    		first=false;
+		    	nom=markersList.item(i).getAttributes().getNamedItem("nom").getNodeValue();
 	    	}
 	    	//si c'est plus pres on change le plus pres
 	    	if(Commun.plusPres(coordX, coordY, lat, lng, minLat, minLong)){
 	    		minLat=lat;
 	    		minLong=lng;
+	    		nom=markersList.item(i).getAttributes().getNamedItem("nom").getNodeValue();
 	    	}
 	    }
-		return (minLat+","+minLong);
+		return (minLat+","+minLong+","+nom);
 	}
 	
 }
