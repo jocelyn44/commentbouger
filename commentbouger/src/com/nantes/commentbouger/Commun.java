@@ -7,7 +7,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class Commun {
-
+	//cette fonction calcule la distance entre deux points GPS
 	public static double getDistance(double lat1, double lon1, double lat2, double lon2){
 		String dep, arr;
 		dep = Double.toString(lat1)+","+Double.toString(lon1);

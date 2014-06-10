@@ -27,7 +27,7 @@ public class Bicloo {
 	private Document getDocument(){
 		Document documentXML = null;
 	    
-	    // on parse le fichier de configuration
+	    // on parse le fichier
 	    try {
 	    File file = new File(chemin);
 		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -51,12 +51,15 @@ public class Bicloo {
 	}
 	
 	//cette fonction retourne vrai si la station 1 est plus proche que la station 2 du point de reference
-	public boolean plusPret(double Xref, double Yref, double X1, double Y1, double X2, double Y2){
+	public boolean plusPres(double Xref, double Yref, double X1, double Y1, double X2, double Y2){
 		return Commun.getDistance(Xref, Yref, X1, Y1)<Commun.getDistance(Xref, Yref, X2, Y2);
 	}
 	
 	// cette fonction permet de trouver la station bicloo la plus proche.
 	public String findBiclooo(double coordX, double coordY){
+		double minLat=0,minLong=0;
+		boolean first = true;
+		
 		//on prend le noeud racine
 		Element racineElement;
 	    racineElement = doc.getDocumentElement();
@@ -69,9 +72,22 @@ public class Bicloo {
 		
 	    //pour chaque station on recherche la plus proche
 	    for(int i=0;i<stationsList.getLength();i++){
-	    	
+	    	double lat,lng;
+	    	lat=Double.valueOf(stationsList.item(i).getChildNodes().item(4).getNodeValue());
+	    	lng=Double.valueOf(stationsList.item(i).getChildNodes().item(5).getNodeValue());
+	    	//si on est sur le premier noeud, on initialise les minis
+	    	if(first==true){
+	    		minLat=lat;
+	    		minLong=lng;
+	    		first=false;
+	    	}
+	    	//si c'est plus pres on change le plus pres
+	    	if(plusPres(coordX, coordY, lat, lng, minLat, minLong)){
+	    		minLat=lat;
+	    		minLong=lng;
+	    	}
 	    }
-		return "";
+		return (minLat+","+minLong);
 	}
 	
 }
