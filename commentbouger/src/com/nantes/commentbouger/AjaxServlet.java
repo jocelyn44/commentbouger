@@ -16,7 +16,7 @@ public class AjaxServlet extends HttpServlet{
 		resp.setContentType("text/plain");
 		if(quoi.equals("bus")){
 			//dans le cas ou on veut trouver les arrets de bus
-			resp.getWriter().write("[bus]");
+			resp.getWriter().write("reponse serveur  : [bus]");
 		}
 		if(quoi.equals("park")){
 			//dans le cas ou on veut trouver le parking le plus proche de l'arrivee
@@ -24,7 +24,7 @@ public class AjaxServlet extends HttpServlet{
 		}
 		if(quoi.equals("bicloo")){
 			//dans le cas ou on veut trouver les stations de bicloo proche de depart arrivee
-			resp.getWriter().write("[bicloo]");
+			resp.getWriter().write("reponse serveur : [bicloo]");
 		}
 	}
 }
