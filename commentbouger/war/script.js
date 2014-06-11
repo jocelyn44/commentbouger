@@ -220,4 +220,47 @@ function affCheminMultiple(depX, depY, arrX, arrY, passages){
 	//t'inspirant de la fonction calcroute je crois 
 }
 
+
+var xmlHttp;// global instance of XMLHttpRequest
+
+function reqServ(quoi, dep, arr){
+	createXmlHttpRequest();
+	xmlHttp.open("GET", "http://localhost:8888/ajax?&quoi="+quoi+"&dep="+dep+"&arr="+arr);
+	xmlHttp.onreadystatechange=handleStateChange;
+	xmlHttp.send(null);
+}
+
+function handleStateChange()
+{
+    if(xmlHttp.readyState==4)
+    {
+        if(xmlHttp.status==200)
+            {
+          var message = xmlHttp.responseText;
+          alert(message);
+
+             //document.getElementById("results").innerHTML=message;
+            }
+        else
+        {
+           alert("Error loading pagen"+ xmlHttp.status +":"+xmlHttp.statusText);
+        }
+    }
+}
+
+function createXmlHttpRequest()
+{
+       if(window.ActiveXObject)
+       {
+        xmlHttp=new ActiveXObject("Microsoft.XMLHTTP");
+      }
+
+    else if(window.XMLHttpRequest)
+    {
+        xmlHttp=new XMLHttpRequest();
+     }
+
+}
+
+
 google.maps.event.addDomListener(window, 'load', initialize);

@@ -8,9 +8,17 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 		<servlet-name>commentbouger</servlet-name>
 		<servlet-class>com.nantes.commentbouger.CommentbougerServlet</servlet-class>
 	</servlet>
+	<servlet>
+		<servlet-name>ajax</servlet-name>
+		<servlet-class>com.nantes.commentbouger.AjaxServlet</servlet-class>
+	</servlet>
 	<servlet-mapping>
 		<servlet-name>commentbouger</servlet-name>
 		<url-pattern>/commentbouger</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ajax</servlet-name>
+		<url-pattern>/ajax</url-pattern>
 	</servlet-mapping>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
