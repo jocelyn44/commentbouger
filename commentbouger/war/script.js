@@ -214,5 +214,10 @@ function placeMarker(coordX, coordY){
 		  infowindow.open(map,marker);
 }
 
+//en gros tu passe uen tableau du genre [[X,Y],[X,Y],[X,Y]...]
+function affCheminMultiple(depX, depY, arrX, arrY, passages){
+	//et la tu fait une fonction qui affiche juste le chemin du bordel, en 
+	//t'inspirant de la fonction calcroute je crois 
+}
 
 google.maps.event.addDomListener(window, 'load', initialize);
