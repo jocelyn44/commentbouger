@@ -62,7 +62,7 @@ function changerApparence(quoi){
 				if(elems[i].id=="checkVoiture"){mode = google.maps.TravelMode.DRIVING;modeFR="Voiture";}
 				if(elems[i].id=="checkVelo"){mode = google.maps.TravelMode.BICYCLING;modeFR="Velo";}
 				if(elems[i].id=="checkPied"){mode = google.maps.TravelMode.WALKING;modeFR="A pied";}
-				var resHtml=("<table border='1' style='border-collapse:collapse;'><tr><th>Mode</th><th>Distance</th><th>Duree</th><th>Prix</th></tr>");
+				
 				if(nb>0){
 					  var duree;
 					  var dist;
@@ -73,16 +73,11 @@ function changerApparence(quoi){
 					  };
 					  directionsService.route(request, function(response, status) {
 					    if (status == google.maps.DirectionsStatus.OK) {
-					      dist = response.routes[0].legs[0].distance.text;
-					      duree= response.routes[0].legs[0].duration.text;
-					      resHtml+=("<tr><td>"+modeFR+"</td><td>"+dist+"</td><td>"+duree+"</td><td>rab</td></tr>");
-					      var warnings = document.getElementById('warnings_panel');
-					      warnings.innerHTML = '<b>' + response.routes[0].warnings + '</b>';
+					      /*var warnings = document.getElementById('warnings_panel');
+					      warnings.innerHTML = '<b>' + response.routes[0].warnings + '</b>';*/
 					      directionsDisplay.setDirections(response);
 					      showSteps(response,"non");
 					    }
-						resHtml+=("</table>");
-						affRes.innerHTML=resHtml;
 					  });
 				}
 			}
@@ -112,10 +107,41 @@ function changerApparence(quoi){
 		}
 
 	}
+	majTempsTableau(start, end);
 }
+
+function majTempsTableau(start, end){
+	var mode= [google.maps.TravelMode.DRIVING, google.maps.TravelMode.BICYCLING, google.maps.TravelMode.WALKING];
+	var affRes = document.getElementById("bandeauBas");
+	affRes.innerHTML=("<table border='1' style='border-collapse:collapse;'><tr><th>Mode</th><th>Distance</th><th>Duree</th><th>Prix</th></tr>");
+	var duree;
+	var dist;
+	for(var i=0;i<3;i++){
+		var request = {
+			      origin: start,
+			      destination: end,
+			      travelMode: mode[i]
+			};
+		directionsService.route(request, function(response, status) {
+		    if (status == google.maps.DirectionsStatus.OK) {
+		      /*var warnings = document.getElementById('warnings_panel');
+		      warnings.innerHTML = '<b>' + response.routes[0].warnings + '</b>';*/
+		    	var modeFR;
+		    	if(response.Tb.travelMode=="DRIVING"){modeFR="Voiture";}
+				if(response.Tb.travelMode=="BICYCLING"){modeFR="Velo";}
+				if(response.Tb.travelMode=="WALKING"){modeFR="A pied";}
+				
+			      dist = response.routes[0].legs[0].distance.text;
+			      duree= response.routes[0].legs[0].duration.text;
+			      affRes.innerHTML=affRes.innerHTML.substring(0, affRes.innerHTML.length-8)+("<tr><td>"+modeFR+"</td><td>"+dist+"</td><td>"+duree+"</td><td>rab</td></tr></table>");
+		    }
+		  });
+	}
+	//affRes.innerHTML=resHtml;
+}
+
 function calcRoute() {
 
-	
   // First, remove any existing markers from the map.
   for (var i = 0; i < markerArray.length; i++) {
     markerArray[i].setMap(null);
