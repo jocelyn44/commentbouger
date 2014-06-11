@@ -1,6 +1,6 @@
 // variable local ou deployee :
-var chemin = "http://1-dot-nantes-commentbouger.appspot.com/";
-//var chemin = "http://localhost:8888/";
+//var chemin = "http://1-dot-nantes-commentbouger.appspot.com/";
+var chemin = "http://localhost:8888/";
 
 var map;
 var directionsDisplay;
@@ -227,12 +227,34 @@ function affCheminMultiple(depX, depY, arrX, arrY, passages){
 
 var xmlHttp;// global instance of XMLHttpRequest
 
-function reqServ(quoi, dep, arr){
-	createXmlHttpRequest();
-	var url=chemin+"ajax?&quoi="+quoi+"&dep="+dep+"&arr="+arr;
-	xmlHttp.open("GET", url);
-	xmlHttp.onreadystatechange=handleStateChange;
-	xmlHttp.send(null);
+function reqServ(quoi){
+	var dep, arr;
+	//on recupere le depart et l'arrivee
+	dep=document.getElementById("dep").value;
+	arr=document.getElementById("arr").value;
+	//on convertie en coordonnees gps
+	var geocoder = new google.maps.Geocoder();
+	var url;
+	geocoder.geocode({
+	    "address": dep
+	}, function(results) {
+		document.getElementById("cache").innerHTML=results[0].geometry.location.lat()+","+results[0].geometry.location.lng();
+	});
+	
+	geocoder.geocode({
+	    "address": arr
+	}, arr=function(results) {
+		document.getElementById("cache").innerHTML+=";"+results[0].geometry.location.lat()+","+results[0].geometry.location.lng();
+		createXmlHttpRequest();
+		var tmp;
+		tmp=document.getElementById("cache").innerHTML.split(';');
+		url=chemin+"ajax?&quoi="+quoi+"&dep="+tmp[0]+"&arr="+tmp[1];
+		xmlHttp.open("GET", url);
+		xmlHttp.onreadystatechange=handleStateChange;
+		xmlHttp.send(null);
+	});
+	
+	
 }
 
 function handleStateChange()
@@ -242,6 +264,12 @@ function handleStateChange()
         if(xmlHttp.status==200)
             {
           var message = xmlHttp.responseText;
+          var res=message.split(';');
+          if(res[0]=="bicloo"){
+        	  placeMarker(parseFloat(res[1].split(',')[0]), parseFloat(res[1].split(',')[1]))
+        	  placeMarker(parseFloat(res[2].split(',')[0]), parseFloat(res[1].split(',')[1]))
+          }
+          
           alert(message);
 
              //document.getElementById("results").innerHTML=message;

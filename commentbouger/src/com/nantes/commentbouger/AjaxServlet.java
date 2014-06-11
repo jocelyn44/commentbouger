@@ -24,7 +24,17 @@ public class AjaxServlet extends HttpServlet{
 		}
 		if(quoi.equals("bicloo")){
 			//dans le cas ou on veut trouver les stations de bicloo proche de depart arrivee
-			resp.getWriter().write("reponse serveur : [bicloo]");
+			String rep="bicloo;";
+			String[] tmp;
+			Bicloo b = new Bicloo();
+			//pour le point de depart
+			tmp=dep.split(",");
+			rep+=b.findBiclooo(Double.parseDouble(tmp[0]), Double.parseDouble(tmp[1]));
+			//pour le point d'arrivee
+			tmp=arr.split(",");
+			rep+=";"+b.findBiclooo(Double.parseDouble(tmp[0]), Double.parseDouble(tmp[1]));
+			
+			resp.getWriter().write(rep);
 		}
 	}
 }
