@@ -1,3 +1,7 @@
+// variable local ou deployee :
+var chemin = "http://1-dot-nantes-commentbouger.appspot.com/";
+//var chemin = "http://localhost:8888/";
+
 var map;
 var directionsDisplay;
 var directionsService;
@@ -225,7 +229,8 @@ var xmlHttp;// global instance of XMLHttpRequest
 
 function reqServ(quoi, dep, arr){
 	createXmlHttpRequest();
-	xmlHttp.open("GET", "http://localhost:8888/ajax?&quoi="+quoi+"&dep="+dep+"&arr="+arr);
+	var url=chemin+"ajax?&quoi="+quoi+"&dep="+dep+"&arr="+arr;
+	xmlHttp.open("GET", url);
 	xmlHttp.onreadystatechange=handleStateChange;
 	xmlHttp.send(null);
 }
