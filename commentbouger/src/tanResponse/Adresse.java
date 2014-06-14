@@ -1,11 +1,11 @@
 package tanResponse;
 
 public class Adresse {
-	String type="";
-	String libelle="";
-	String id="";
-	String ville="";
-	String cp="";
+	private String type="";
+	private String nom="";
+	private String id="";
+	private String ville="";
+	private String cp="";
 	
 	public Adresse(String params){
 		String[] tab=params.split(",");
@@ -14,16 +14,40 @@ public class Adresse {
 				ville=s.split(":")[1].substring(1, s.split(":")[1].length()-1);
 			}
 			if(s.contains("nom")){
-				libelle=s.split(":")[1].substring(1, s.split(":")[1].length()-1);
+				nom=s.split(":")[1].substring(1, s.split(":")[1].length()-1);
 			}
 			if(s.contains("cp")){
 				cp=s.split(":")[1].substring(1, s.split(":")[1].length()-2);
 			}
+			if(s.contains("id")){
+				id=s.split(":")[1].substring(1, s.split(":")[1].length()-2);
+			}
 		}
-		libelle=ville+" "+cp+": "+libelle;
 	}
 	
 	public String toString(){
-		return libelle;
+		return ville+" "+cp+": "+nom+"["+id;
 	}
+
+	public String getType() {
+		return type;
+	}
+
+	public String getNom() {
+		return nom;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public String getVille() {
+		return ville;
+	}
+
+	public String getCp() {
+		return cp;
+	}
+	
+	
 }

@@ -34,26 +34,28 @@ public class AjaxServlet extends HttpServlet{
 		String arr= req.getParameter("arr");
 
 		resp.setContentType("text/plain");
+		
 		if(quoi.equals("bus")){
 			//dans le cas ou on veut trouver les arrets de bus
 			resp.getWriter().write("reponse serveur  : [bus]");
-			String surl="https://www.tan.fr/ewp/mhv.php/itineraire/resultat.json?depart=Address%7CADDRESS11524%7CJULES+VERNE%7CNantes%7C%7Cboulevard%7C307521%7C2256362&arrive=Address%7CADDRESS11910%7CMAIL+PABLO+PICASSO%7CNantes%7C%7C%7C306856%7C2253442&type=0&accessible=0&temps=2014-06-26+14%3A55&retour=0";
-			surl="https://www.tan.fr/ewp/mhv.php/itineraire/resultat.json?depart=StopArea%7CNANKERE%7CKeren%7CNantes%7C%7C%7C307140%7C2256629&arrive=StopArea%7CNANCOUD%7CCoudray%7CNantes%7C%7C%7C306404%7C2255297&type=0&accessible=0&temps=2014-06-26+14%3A55&retour=0";
+			dep=dep.replaceAll("-", "+").replaceAll("\\|", "%7C").replace(" ", "+");
+			arr=arr.replaceAll("-", "+").replaceAll("\\|", "%7C").replace(" ", "+");
+			String surl="https://www.tan.fr/ewp/mhv.php/itineraire/resultat.json?depart="+dep+"&arrive="+arr+"&type=0&accessible=0&temps=2014-06-26+14%3A55&retour=0";
 			URL url = new URL(surl);
 			
 			
 			URLConnection connection = url.openConnection();
 			BufferedReader r = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 			String line = r.readLine();
-			//HashMap<String, Object> chemin;
-			try {
-				JSONArray json= new JSONArray(line);
-				ResponseItineraire response = new tanResponse.ResponseItineraire(json.get(1).toString());
-				//chemin.toString();
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+ 			if(line.contains("error")){
+				resp.getWriter().write(line);
 			}
+			else{
+				ResponseItineraire response = new tanResponse.ResponseItineraire(line);	
+				resp.getWriter().write("bus;"+response.toString());
+			}
+			//HashMap<String, Object> chemin;
+			
 			System.out.println("ok2");
 			
 			
@@ -88,9 +90,12 @@ public class AjaxServlet extends HttpServlet{
 			}
 			String res="";
 			for(Adresse a: listeAddresse){
-				res+=a.toString()+";";
+				if(a.getNom().equalsIgnoreCase(a.getVille())!=true)
+					res+=a.toString()+";";
 			}
-			resp.getWriter().write("adresse;"+res+";"+req.getParameter("qui"));
+			if(res=="")
+				res="adresse;Il n'y a pas de resultats, veuillez saisir une adresse plus precise ";
+			resp.getWriter().write("adresse;"+res.substring(0, res.length()-1)+";"+req.getParameter("qui"));
 		}
 		else if(quoi.equals("park")){
 			//dans le cas ou on veut trouver le parking le plus proche de l'arrivee

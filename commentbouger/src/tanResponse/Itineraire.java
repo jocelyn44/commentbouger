@@ -3,6 +3,7 @@ package tanResponse;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.google.appengine.api.search.query.ExpressionParser.str_return;
 import com.google.appengine.labs.repackaged.org.json.JSONArray;
 import com.google.appengine.labs.repackaged.org.json.JSONException;
 
@@ -34,8 +35,7 @@ public class Itineraire {
 			  }
 			  etapes=creerEtape(strEtapes);
 		  }
-		  
-		  tab.toString();
+		  prix=duree%60*1.5;
 	  }
 	  
 	  public List<Etape> creerEtape(String e){
@@ -77,5 +77,8 @@ public class Itineraire {
 		return prix;
 	}
 	  
+	public String toString(){
+		return this.etapes.size()+","+duree+","+prix;
+	}
 	  
 }
