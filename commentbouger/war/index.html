@@ -6,6 +6,7 @@
     <script type="text/javascript"
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCty_tfQgPAUaz8zjBc9ckJ6oFfUH9EJlg&sensor=true">
     </script>
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="script.js">     
     </script>
   </head>
@@ -13,10 +14,12 @@
   	<div hidden id="cache"></div>
   	<div id="selecteur">
 	    <form action="commentbouger">
-			<p style="position:relative;left:5px;"> <img src="img/drapVert.png" alt="Départ :"/>
-			<input type="text" id="dep" name="dep"/>
+			<p style="position:relative;left:5px;"> 
+			<div><img src="img/drapVert.png" alt="Départ :"/> <input type="text" id="dep" name="dep"/>
+			<img src="img/loupe.png" alt="loupe" style="position:relative;top:8px;" onclick="reqPosTan('dep')"/>
+			<img src="img/loupe.png" alt="loupe" style="position:relative;top:8px;" onclick="reqPosTan('arr')"/>
 			<input type="text" id="arr" name="arr"/>
-			<img src="img/drapRouge.png" alt="Arrivée :"/>
+			<img src="img/drapRouge.png" alt="Arrivée :"/></div>
 			<p align="center" style="position:center;">
 			<img src="img/voiture.png" alt="En voiture :" id="checkVoiture" onclick="changerApparence('checkVoiture')"/>
 			<img src="img/bus.png" alt="En bus / tram :" id="checkBus" onclick="reqServ('bus');"/> 
@@ -42,6 +45,8 @@
 	      	<td id="tmpPieds"></td>
 	      </tr>
 	    </table>
+	</div>
+	<div id="choixPointTan">
 	</div>
     <div id="map-canvas"></div>
     <div id="warnings_panel" style="width:100%;height:10%;text-align:center"></div>

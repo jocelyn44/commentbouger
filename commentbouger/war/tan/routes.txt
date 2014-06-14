@@ -55,11 +55,11 @@ E4-0,E4,"Ligne Express Vertou",,3
 E5-0,E5,"Ligne Express Carquefou",,3
 E8-0,E8,"Ligne Express Le Pellerin",,3
 LU-0,LU,"Luciole",,3
-NA-0,NA,"Ligne Navette Aéroport",,3
+NA-0,NA,"Ligne Navette Aeroport",,3
 NL-0,NL,"Ligne Navibus",,3
-RA-0,RA,"Renforts Affrétés",,3
-RB-0,RB,"Renforts Le Bêle",,3
+RA-0,RA,"Renforts Affretes",,3
+RB-0,RB,"Renforts Le Bale",,3
 RS-0,RS,"Renforts St Herblain",,3
 RT-0,RT,"Renforts Trentemoult",,3
-ZB-0,NB,"Ligne Navette Dépôt Le Bêle",,3
-ZT-0,ET,"Ligne Navette Dépôt Trentemoult",,3
+ZB-0,NB,"Ligne Navette Depat Le Bale",,3
+ZT-0,ET,"Ligne Navette Depat Trentemoult",,3
