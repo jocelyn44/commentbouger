@@ -63,13 +63,13 @@ function affAdresse(repServ){
 		
 		resHTML+="<input type='button' value='Annuler' onclick=\"annuler('"+qui+"')\"/></p>";
 		document.getElementById("choixPointTan"+qui).innerHTML=resHTML;
-		document.getElementById("choixPointTan"+qui).className="choixVis"
 	}
 
-	if(qui=="arr")
+	if(qui=="arr"){
 		reqPosTan("dep");
-	if(qui=="dep")
-		reqPosTan("iti");
+		document.getElementById("choixPointTandep").className="choixVis";
+		document.getElementById("choixPointTanarr").className="choixVis";
+	}
 		
 }
 
@@ -115,7 +115,7 @@ function handleStateChange()
         	  placeMarker(parseFloat(res[2].split(',')[0]), parseFloat(res[1].split(',')[1]))
           }
           if(res[0]=="bus"){
-        	  
+        	  affItis(message.substring(3,message.length));
           }
           if(res[0]=="adresse"){
         	  affAdresse(message);
@@ -129,6 +129,26 @@ function handleStateChange()
            alert("Error loading pagen"+ xmlHttp.status +":"+xmlHttp.statusText);
         }
     }
+}
+
+function affItis(repServ){
+	var popup=document.getElementById("choixItisTan");
+	var rep=repServ.split(';');
+	var qui= rep[rep.length-1];
+	var resHTML="<p><h2>Veuillez saisir votre itineraire</h2>";
+	
+	for(var i=1;i<rep.length-1;i++){
+		var a = rep[i].split('[')[0].split(',');
+		resHTML+="<input type='radio' onclick=\"choisir('"+a[1]+"','"+qui+"')\"/>"+utf8_decode("nombre d'etapes : "+a[0]+", duree : "+a[1]+",prix : "+a[2])+"<br/>";
+		var etapes = rep[i].split('[')[1].split(',');
+		for(j=0;j<etapes.length;j++){
+			resHTML+="<ul>"+etapes[j]+"</ul>";
+		}
+	}
+	
+	resHTML+="<input type='button' value='Annuler' onclick=\"annuler('"+qui+"')\"/></p>";
+	popup.innerHTML=resHTML;
+	document.getElementById("choixItisTan").className="choixVis";
 }
 
 function createXmlHttpRequest()
@@ -146,11 +166,11 @@ function createXmlHttpRequest()
 
 function reqPosTan(qui){
 	createXmlHttpRequest();
-	var elem;
+	var elem,ou="";
 	if(qui=='dep' || qui=='arr'){
 		elem=document.getElementById(qui);
+		ou = replaceAll(' ','-',elem.value);
 	}
-	var ou = replaceAll(' ','-',elem.value);
 	url=chemin+"ajax?quoi=adresse&ou="+ou+"&qui="+qui;
 	xmlHttp.open("GET", url);
 	xmlHttp.onreadystatechange=handleStateChange;

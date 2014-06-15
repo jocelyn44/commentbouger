@@ -35,7 +35,7 @@ public class Itineraire {
 			  }
 			  etapes=creerEtape(strEtapes);
 		  }
-		  prix=duree%60*1.5;
+		  prix=((duree/60)+1)*1.5;
 	  }
 	  
 	  public List<Etape> creerEtape(String e){
@@ -78,7 +78,12 @@ public class Itineraire {
 	}
 	  
 	public String toString(){
-		return this.etapes.size()+","+duree+","+prix;
+		String res=this.etapes.size()+","+duree+","+prix+"[";
+		for(Etape e: etapes){
+			if(e.getType()!="bus")res+=",marche,";
+			else res+="ligne "+e.getLigne()+"vers "+e.getDirection()+" jusqu'a "+e.getArretDest()+",";
+		}
+		return res.substring(0, res.length()-1);
 	}
 	  
 }

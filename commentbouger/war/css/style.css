@@ -1,0 +1,29 @@
+ .bandeau{background-color: white; width: 100%; position: absolute; height: 0%;}
+ html { height: 100%; position: "absolute";}
+ body { height: 100%; margin: 0; padding: 0 }
+ #map-canvas { position: absolute; height: 100%; width: 100%; z-index: 2;}
+ #selecteur{position: absolute; height: 100px; width: 430px; left: 35%; top:0%; z-index: 3; opacity: 0.3; transition: all 1s;}
+ #selecteur:hover{background-color: transparent; opacity: 1; transition:all 1s;}
+ #bandeauBas {top: 0%; z-index: 2; transition:all 1s; top:100%; opacity:0;}
+ #comparateur{position:absolute;}
+ .choixVis{position:absolute;top:30%;left:30%;height:40%;width:40%;border: solid 3px;border-color:DeepSkyBLue; background-color: white;border-radius:30px;overflow: auto;}
+ .loupeInvis,.choixInvis{z-index: 2;transition: all 1s;visibility: hidden;}
+ .loupeVis,.choixVis{z-index: 4;transition: all 1s;}
+ #choixPointTandep.choixVis{z-index: 5;}
+ #choixItisTan{border-radius:0px; -moz-border-radius-topleft: 30px;-moz-border-radius-bottomleft: 30px;-webkit-border-top-left-radius: 30px;-webkit-border-bottom-left-radius: 30px;}
+ 
+ @media screen and (min-resolution: 150dpi) {
+ .bandeau{background-color: white; width: 100%; position: absolute; height: 0%;}
+ html { height: 100%; position: "absolute";}
+ body { height: 100%; margin: 0; padding: 0 }
+ #map-canvas { position: absolute; height: 100%; width: 100%; z-index: 2;}
+ #selecteur{position: absolute; width: 80%; left: 10%; top:0%; z-index: 3; opacity: 0.3; transition: all 1s;}
+ #selecteur:hover{background-color: transparent; opacity: 1; transition:all 1s;}
+ #bandeauBas {top: 0%; z-index: 2; transition:all 1s; top:100%; opacity:0;}
+ #comparateur{position:absolute;}
+ .choixVis{position:absolute;top:10%;left:5%;height:80%;width:90%;border: solid 3px;border-color:DeepSkyBLue; background-color: white;border-radius:30px;overflow: auto;}
+ .loupeInvis,.choixInvis{z-index: 2;transition: all 0.5s;visibility: hidden;}
+ .loupeVis,.choixVis{z-index: 4;transition: all 0.5s;}
+ #choixPointTandep.choixVis{z-index: 5;}
+ #choixItisTan{border-radius:0px; -moz-border-radius-topleft: 30px;-moz-border-radius-bottomleft: 30px;-webkit-border-top-left-radius: 30px;-webkit-border-bottom-left-radius: 30px;}
+}

@@ -37,7 +37,6 @@ public class AjaxServlet extends HttpServlet{
 		
 		if(quoi.equals("bus")){
 			//dans le cas ou on veut trouver les arrets de bus
-			resp.getWriter().write("reponse serveur  : [bus]");
 			dep=dep.replaceAll("-", "+").replaceAll("\\|", "%7C").replace(" ", "+");
 			arr=arr.replaceAll("-", "+").replaceAll("\\|", "%7C").replace(" ", "+");
 			String surl="https://www.tan.fr/ewp/mhv.php/itineraire/resultat.json?depart="+dep+"&arrive="+arr+"&type=0&accessible=0&temps=2014-06-26+14%3A55&retour=0";
@@ -46,7 +45,7 @@ public class AjaxServlet extends HttpServlet{
 			
 			URLConnection connection = url.openConnection();
 			BufferedReader r = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-			String line = r.readLine();
+			String line = sansAccents(r.readLine());
  			if(line.contains("error")){
 				resp.getWriter().write(line);
 			}
@@ -54,12 +53,6 @@ public class AjaxServlet extends HttpServlet{
 				ResponseItineraire response = new tanResponse.ResponseItineraire(line);	
 				resp.getWriter().write("bus;"+response.toString());
 			}
-			//HashMap<String, Object> chemin;
-			
-			System.out.println("ok2");
-			
-			
-			
 		}
 		else if(quoi.equals("adresse")){
 			//dans le cas ou on veut trouver les arrets de bus
@@ -71,7 +64,7 @@ public class AjaxServlet extends HttpServlet{
 			List<Adresse> listeAddresse = new ArrayList<Adresse>();
 			URLConnection connection = url.openConnection();
 			BufferedReader r = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-			String line = r.readLine();
+			String line = sansAccents(r.readLine());
 			String[] tab= line.substring(1, line.length()-1).split("\\[");
 			for(int j=0;j<tab.length;j++){
 				if(tab[j].contains("Addresses") || tab[j].contains("Points d'arr") || tab[j].contains("Stops") ){
@@ -94,7 +87,7 @@ public class AjaxServlet extends HttpServlet{
 					res+=a.toString()+";";
 			}
 			if(res=="")
-				res="adresse;Il n'y a pas de resultats, veuillez saisir une adresse plus precise ";
+				res="Il n'y a pas de resultats, veuillez saisir une adresse plus precise ";
 			resp.getWriter().write("adresse;"+res.substring(0, res.length()-1)+";"+req.getParameter("qui"));
 		}
 		else if(quoi.equals("park")){
@@ -115,6 +108,10 @@ public class AjaxServlet extends HttpServlet{
 			
 			resp.getWriter().write(rep);
 		}
+	}
+	
+	public String sansAccents(String in){
+		return in.replace("\\u00e8", "e").replace("\\u00e9", "e");
 	}
 }
 

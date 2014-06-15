@@ -20,7 +20,7 @@ public class Adresse {
 				cp=s.split(":")[1].substring(1, s.split(":")[1].length()-2);
 			}
 			if(s.contains("id")){
-				id=s.split(":")[1].substring(1, s.split(":")[1].length()-2);
+				id=s.split(":")[1].substring(1, s.split(":")[1].length()-1);
 			}
 		}
 	}
