@@ -2,14 +2,14 @@ package tanResponse;
 
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import com.google.appengine.labs.repackaged.org.json.JSONArray;
 import com.google.appengine.labs.repackaged.org.json.JSONException;
+import com.google.appengine.labs.repackaged.org.json.JSONObject;
 
 public class ResponseItineraire {
-	List<Itineraire> lItis = new ArrayList<Itineraire>();
+	private List<Itineraire> lItis = new ArrayList<Itineraire>();
 	
 	public ResponseItineraire(String pmap) {
 		try {
@@ -31,6 +31,10 @@ public class ResponseItineraire {
 			res+=i.toString()+";";
 		}
 		return res;
+	}
+	
+	public Itineraire get(int i){
+		return lItis.get(i);
 	}
 
 }

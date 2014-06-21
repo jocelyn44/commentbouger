@@ -1,37 +1,55 @@
 package tanResponse;
 
+import java.util.logging.Logger;
+
+import com.google.appengine.labs.repackaged.org.json.JSONException;
+import com.google.appengine.labs.repackaged.org.json.JSONObject;
+
 public class Etape {
 	private String type; // marche / conduite ...
 	private String ligne;
 	private String arretDest;
+	private String arretDep;
 	private String direction;
 	
 	public Etape(String params){
-			String[] tab = params.substring(1, params.length()-1).split("\\{")[1].split("\\}")[0].split(",");
+		  final Logger log = Logger.getLogger(Etape.class.getName());
+
 			//dans le cas ou on est sur un trajet en bus / tram
-			if(params.contains("\"ligne\":{")){
-				type="bus";
-				String[] tab2 = params.substring(1, params.length()-1).split("\\{")[2].split("\\}")[0].split(",");
-				for(String str:tab){
-					if(str.contains("numLigne")){
-						ligne=str.split(":")[1].substring(1, str.split(":")[1].length()-1);
+			if(params.contains("ligne")){
+				try {
+					JSONObject j;
+					if(params.startsWith("{"))
+						j= new JSONObject(params);
+					else
+						j= new JSONObject(params.substring(1, params.length()-1));
+					if(j.get("marche").equals(false)){
+						type="bus";
+						JSONObject d = new JSONObject(j.getString("arretStop"));
+						JSONObject l = new JSONObject(j.getString("ligne"));
+						arretDest=d.getString("libelle");
+						ligne=l.getString("numLigne");
+						direction=l.getString("terminus");
+						j.toString();
+					}else{
+						type="marche";
+						JSONObject d = new JSONObject(j.getString("arretStop"));
+						arretDest=d.getString("libelle");
 					}
-					if(str.contains("terminus")){
-						direction=str.split(":")[1].substring(1, str.split(":")[1].length()-1);
-					}
-				}
-				for(String str:tab2){
-					if(str.contains("libelle")){
-						arretDest=str.split(":")[1].substring(1, str.split(":")[1].length()-1);
-					}
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}//dans le cas ou on est dans un trajet a pied
 			else{
-				type="marche";
-				for(String str:tab){
-					if(str.contains("libelle")){
-						arretDest=str.split(":")[1].substring(1, str.split(":")[1].length()-1);
-					}
+				try {
+					JSONObject j = new JSONObject(params);
+					JSONObject d = new JSONObject(j.getString("arretStop"));
+					arretDest=d.getString("libelle");
+					j.toString();
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 				
 			}

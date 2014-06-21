@@ -2,31 +2,38 @@ package com.nantes.commentbouger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-import org.w3c.dom.Element;
 
+
+import nantes.tan.Stops;
 import tanResponse.Adresse;
+import tanResponse.Etape;
+import tanResponse.Itineraire;
 import tanResponse.ResponseItineraire;
 
-import com.google.appengine.api.urlfetch.HTTPRequest;
 import com.google.appengine.labs.repackaged.org.json.JSONArray;
 import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
 
 
 public class AjaxServlet extends HttpServlet{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
 		String quoi = req.getParameter("quoi");
@@ -39,20 +46,47 @@ public class AjaxServlet extends HttpServlet{
 			//dans le cas ou on veut trouver les arrets de bus
 			dep=dep.replaceAll("-", "+").replaceAll("\\|", "%7C").replace(" ", "+");
 			arr=arr.replaceAll("-", "+").replaceAll("\\|", "%7C").replace(" ", "+");
-			String surl="https://www.tan.fr/ewp/mhv.php/itineraire/resultat.json?depart="+dep+"&arrive="+arr+"&type=0&accessible=0&temps=2014-06-26+14%3A55&retour=0";
+			Date d = new Date();
+			String heure;
+			heure=(d.getYear()+1900)+"-";
+			if(Integer.toString(d.getMonth()).length()<2)
+				heure+="0"+(d.getMonth()+1)+"-";
+			else
+				heure+=(d.getMonth()+1)+"-";
+			if(Integer.toString(d.getDay()).length()<2)
+				heure+="0"+d.getDay()+"+";
+			else
+				heure+=d.getDay()+"+";
+			if(Integer.toString(d.getHours()).length()<2)
+				heure+="0"+d.getHours()+"%3A";
+			else
+				heure+=d.getHours()+"%3A";
+			if(Integer.toString(d.getMinutes()).length()<2)
+				heure+="0"+d.getMinutes();
+			else
+				heure+=d.getMinutes();
+			//heure=
+			String surl="https://www.tan.fr/ewp/mhv.php/itineraire/resultat.json?depart="+ dep+"&arrive="+arr+"&type=0&accessible=0&temps="+heure+"&retour=0";
 			URL url = new URL(surl);
 			
 			
 			URLConnection connection = url.openConnection();
 			BufferedReader r = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			final Logger log = Logger.getLogger(AjaxServlet.class.getName());
+			
+			
 			String line = sansAccents(r.readLine());
- 			if(line.contains("error")){
+			log.info("requete tan : "+line);
+			if(line.contains("error")){
 				resp.getWriter().write(line);
 			}
 			else{
-				ResponseItineraire response = new tanResponse.ResponseItineraire(line);	
+				HttpSession s = req.getSession();
+				ResponseItineraire response = new tanResponse.ResponseItineraire(line);
+	 			s.setAttribute("itineraires", line);	
 				resp.getWriter().write("bus;"+response.toString());
 			}
+ 			
 		}
 		else if(quoi.equals("adresse")){
 			//dans le cas ou on veut trouver les arrets de bus
@@ -108,11 +142,90 @@ public class AjaxServlet extends HttpServlet{
 			
 			resp.getWriter().write(rep);
 		}
+		else if(quoi.equals("choixIti")){
+			//on récupere le numero de l'itineraire
+			int numIti= Integer.parseInt(req.getParameter("iti"));
+			List<Stops> arrets = nantes.tan.Tan.genererListStops();
+			HttpSession s = req.getSession();
+			String strItis = (String) s.getAttribute("itineraires");
+			Itineraire iti = new tanResponse.ResponseItineraire(strItis).get(numIti-1);
+			String res=getCoordinatesFromAdress(iti.getAdresseDepart());
+			
+			int i=0;
+			String type="";
+			//pour chaque etape
+			for(Etape e: iti.getEtapes()){
+				String lngDep;
+				String latDep;
+				//si on est dans le cas d'une marche, on se rend a une adresse ou on part d'une
+				//adresse donc on cherche les coordonnees GPS de la ou les adresses
+				if(e.getType()=="marche" || e.getType()==null)
+					type="checkPied";
+				else
+					type="checkBus";
+				boolean trouve=false;
+				//on cherche si c'est un arret de bus
+				for(Stops stop : arrets){
+					if(!trouve){
+						if(stop.getStop_name().equals(e.getArretDest())){
+							res+=","+type+";"+stop.getStop_lat()+","+stop.getStop_lon();
+							trouve=true;
+						}
+					}
+				}
+				//sinon c'est une adresse
+				if(!trouve){
+					if(i>0)
+						res+=type+","+getCoordinatesFromAdress(e.getArretDest());
+					else
+						res+=type+","+getCoordinatesFromAdress(iti.getAdresseDepart());
+				}
+				trouve=false;
+			
+				e.toString();
+				i++;
+			}
+			resp.getWriter().write("iti;"+res+","+type);
+		}
 	}
 	
 	public String sansAccents(String in){
 		return in.replace("\\u00e8", "e").replace("\\u00e9", "e");
 	}
+	
+	public String getCoordinatesFromAdress(String adresse){
+		String res="",strMap="",tmp="";
+		String urlMap = "https://maps.googleapis.com/maps/api/geocode/json?address=";
+		URL urlDep;
+		try {
+			urlDep = new URL(urlMap+adresse.replace(" ", "+"));
+			URLConnection connection = urlDep.openConnection();
+			BufferedReader r = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			while((tmp=r.readLine())!=null){
+				strMap+=tmp;
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		try {
+			JSONObject repMap = new JSONObject(strMap);
+			JSONArray arrMap = new JSONArray(repMap.get("results").toString());
+			repMap = new JSONObject(arrMap.get(0).toString());
+			repMap = new JSONObject(repMap.get("geometry").toString());
+			repMap = new JSONObject(repMap.get("location").toString());
+			res+=repMap.get("lng").toString();
+			res+=","+repMap.get("lat").toString();
+			repMap.toString();
+		} catch (JSONException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		return res;
+	}
 }
+
+
 
 

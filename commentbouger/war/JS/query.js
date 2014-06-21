@@ -74,32 +74,47 @@ function affAdresse(repServ){
 }
 
 function choisir(val,qui){
-	
-	document.getElementById("choixPointTan"+qui).innerHTML="";
-	document.getElementById("choixPointTan"+qui).className="choixInvis";
-	if(qui=="dep"){
-		depChoisiTan=val;
-	}
-	else{
-		arrChoisiTan=val;
-	}
-	if(depChoisiTan!="" && arrChoisiTan!="" && depChoisiTan!="noResults" && arrChoisiTan!="noResults"){
+	if(qui.indexOf("choixIti:")> -1){
 		createXmlHttpRequest();
-		url=chemin+"ajax?&quoi=bus&dep="+depChoisiTan+"&arr="+arrChoisiTan;
+		url=chemin+"ajax?&quoi=choixIti&iti="+qui.split(":")[1];
 		xmlHttp.open("GET", url);
 		xmlHttp.onreadystatechange=handleStateChange;
 		xmlHttp.send(null);
+		document.getElementById("choixItisTan").className="choixInvis";
+		document.getElementById("choixItisTan").innerHTML="";
+	}
+	else{
+		document.getElementById("choixPointTan"+qui).innerHTML="";
+		document.getElementById("choixPointTan"+qui).className="choixInvis";
+		if(qui=="dep"){
+			depChoisiTan=val;
+		}
+		else{
+			arrChoisiTan=val;
+		}
+		if(depChoisiTan!="" && arrChoisiTan!="" && depChoisiTan!="noResults" && arrChoisiTan!="noResults"){
+			createXmlHttpRequest();
+			url=chemin+"ajax?&quoi=bus&dep="+depChoisiTan+"&arr="+arrChoisiTan;
+			xmlHttp.open("GET", url);
+			xmlHttp.onreadystatechange=handleStateChange;
+			xmlHttp.send(null);
+		}
 	}
 }
 
 function annuler(qui){
+	if(qui=="iti"){
+		document.getElementById("choixItisTan").className="choixInvis";
+		document.getElementById("choixItisTan").innerHTML="";
+	}
+	else{
 	document.getElementById("choixPointTan"+qui).className="choixInvis";
 	document.getElementById("choixPointTan"+qui).innerHTML="";
 	if(qui=="dep")
 		depChoisiTan="";
 	if(qui=="arr")
 		arrChoisiTan="";
-	
+	}
 }
 
 function handleStateChange()
@@ -120,6 +135,9 @@ function handleStateChange()
           if(res[0]=="adresse"){
         	  affAdresse(message);
           }
+          if(res[0]=="iti"){
+        	  multiChemin(message.substring(3,message.length));
+          }
           //alert(message);
 
              //document.getElementById("results").innerHTML=message;
@@ -134,21 +152,22 @@ function handleStateChange()
 function affItis(repServ){
 	var popup=document.getElementById("choixItisTan");
 	var rep=repServ.split(';');
-	var qui= rep[rep.length-1];
 	var resHTML="<p><h2>Veuillez saisir votre itineraire</h2>";
 	
 	for(var i=1;i<rep.length-1;i++){
-		var a = rep[i].split('[')[0].split(',');
-		resHTML+="<input type='radio' onclick=\"choisir('"+a[1]+"','"+qui+"')\"/>"+utf8_decode("nombre d'etapes : "+a[0]+", duree : "+a[1]+",prix : "+a[2])+"<br/>";
-		var etapes = rep[i].split('[')[1].split(',');
+		var a = rep[i].split('/')[0].split(',');
+		resHTML+="<input type='radio' onclick=\"choisir('"+a[1]+"','"+"choixIti:"+i+"')\"/>"+utf8_decode(a[0])+"<br/>";
+		var etapes = rep[i].split('/')[1].split(',');
 		for(j=0;j<etapes.length;j++){
 			resHTML+="<ul>"+etapes[j]+"</ul>";
 		}
 	}
 	
-	resHTML+="<input type='button' value='Annuler' onclick=\"annuler('"+qui+"')\"/></p>";
+	resHTML+="<input type='button' value='Annuler' onclick=\"annuler('iti')\"/></p>";
 	popup.innerHTML=resHTML;
 	document.getElementById("choixItisTan").className="choixVis";
+	arrChoisiTan="";
+	depChoisiTan="";
 }
 
 function createXmlHttpRequest()
