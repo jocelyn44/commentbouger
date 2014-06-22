@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 
 
 
@@ -46,25 +48,24 @@ public class AjaxServlet extends HttpServlet{
 			//dans le cas ou on veut trouver les arrets de bus
 			dep=dep.replaceAll("-", "+").replaceAll("\\|", "%7C").replace(" ", "+");
 			arr=arr.replaceAll("-", "+").replaceAll("\\|", "%7C").replace(" ", "+");
-			Date d = new Date();
 			String heure;
-			heure=(d.getYear()+1900)+"-";
-			if(Integer.toString(d.getMonth()).length()<2)
-				heure+="0"+(d.getMonth()+1)+"-";
+			heure=(Calendar.getInstance().get(Calendar.YEAR))+"-";
+			if(Integer.toString(Calendar.getInstance().get(Calendar.MONTH)).length()<2)
+				heure+="0"+(Calendar.getInstance().get(Calendar.MONTH)+1)+"-";
 			else
-				heure+=(d.getMonth()+1)+"-";
-			if(Integer.toString(d.getDay()).length()<2)
-				heure+="0"+d.getDay()+"+";
+				heure+=(Calendar.getInstance().get(Calendar.MONTH)+1)+"-";
+			if(Integer.toString(Calendar.getInstance().get(Calendar.DAY_OF_MONTH)).length()<2)
+				heure+="0"+Calendar.getInstance().get(Calendar.DAY_OF_MONTH)+"+";
 			else
-				heure+=d.getDay()+"+";
-			if(Integer.toString(d.getHours()).length()<2)
-				heure+="0"+d.getHours()+"%3A";
+				heure+=Calendar.getInstance().get(Calendar.DAY_OF_MONTH)+"+";
+			if(Integer.toString(Calendar.getInstance().get(Calendar.HOUR_OF_DAY)).length()<2)
+				heure+="0"+Calendar.getInstance().get(Calendar.HOUR_OF_DAY)+"%3A";
 			else
-				heure+=d.getHours()+"%3A";
-			if(Integer.toString(d.getMinutes()).length()<2)
-				heure+="0"+d.getMinutes();
+				heure+=Calendar.getInstance().get(Calendar.HOUR_OF_DAY)+"%3A";
+			if(Integer.toString(Calendar.getInstance().get(Calendar.MINUTE)).length()<2)
+				heure+="0"+Calendar.getInstance().get(Calendar.MINUTE);
 			else
-				heure+=d.getMinutes();
+				heure+=Calendar.getInstance().get(Calendar.MINUTE);
 			//heure=
 			String surl="https://www.tan.fr/ewp/mhv.php/itineraire/resultat.json?depart="+ dep+"&arrive="+arr+"&type=0&accessible=0&temps="+heure+"&retour=0";
 			URL url = new URL(surl);
@@ -74,9 +75,8 @@ public class AjaxServlet extends HttpServlet{
 			BufferedReader r = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 			final Logger log = Logger.getLogger(AjaxServlet.class.getName());
 			
-			
-			String line = sansAccents(r.readLine());
-			log.info("requete tan : "+line);
+			String line=r.readLine();
+			line = sansAccents(line);
 			if(line.contains("error")){
 				resp.getWriter().write(line);
 			}
@@ -215,8 +215,8 @@ public class AjaxServlet extends HttpServlet{
 			repMap = new JSONObject(arrMap.get(0).toString());
 			repMap = new JSONObject(repMap.get("geometry").toString());
 			repMap = new JSONObject(repMap.get("location").toString());
-			res+=repMap.get("lng").toString();
-			res+=","+repMap.get("lat").toString();
+			res+=repMap.get("lat").toString();
+			res+=","+repMap.get("lng").toString();
 			repMap.toString();
 		} catch (JSONException e1) {
 			// TODO Auto-generated catch block

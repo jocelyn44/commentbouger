@@ -52,6 +52,10 @@ function initialize() {
 
   // Instantiate an info window to hold step text.
   stepDisplay = new google.maps.InfoWindow();
+  //-1.5563652,47.2134985,checkPied;47.21694925,-1.55679602,checkBus;47.22998380,-1.61681022,checkBus
+  //-1.5563652,47.2134985,checkPied;-1.55679602,47.21694925,checkBus;-1.61681022,47.22998380,checkBus
+  //multiChemin("47.22019369,-1.60338192,checkPied;47.25366765,-1.59771330,checkTram;47.15931812,-1.59829606,checkTram;47.15685237,-1.59744147,checkTram;47.22973235,-1.58938102,checkBicloo;47.26978758,-1.57207782,checkVoiture;47.21409134,-1.72340027,checkBus;47.20911263,-1.55025692,checkVelo;47.22019369,-1.60338192,checkPied");
+  //multiChemin("47.2134985,-1.5563652,checkPied;47.21694925,-1.55679602,checkBus;47.22998380,-1.61681022,checkBus");
 }
 
 function changerApparence(quoi){

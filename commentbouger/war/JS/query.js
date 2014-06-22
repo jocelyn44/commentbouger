@@ -136,7 +136,7 @@ function handleStateChange()
         	  affAdresse(message);
           }
           if(res[0]=="iti"){
-        	  multiChemin(message.substring(3,message.length));
+        	  multiChemin(message.substring(4,message.length));
           }
           //alert(message);
 
