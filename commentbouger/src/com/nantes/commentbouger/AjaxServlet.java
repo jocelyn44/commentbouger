@@ -1,6 +1,8 @@
 package com.nantes.commentbouger;
 
 import java.io.BufferedReader;
+
+import java.net.*;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -36,6 +38,8 @@ public class AjaxServlet extends HttpServlet{
 	 */
 	private static final long serialVersionUID = 1L;
 
+	final Logger log = Logger.getLogger(Itineraire.class.getName());
+	
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
 		String quoi = req.getParameter("quoi");
@@ -145,18 +149,16 @@ public class AjaxServlet extends HttpServlet{
 		else if(quoi.equals("choixIti")){
 			//on récupere le numero de l'itineraire
 			int numIti= Integer.parseInt(req.getParameter("iti"));
-			List<Stops> arrets = nantes.tan.Tan.genererListStops();
 			HttpSession s = req.getSession();
 			String strItis = (String) s.getAttribute("itineraires");
 			Itineraire iti = new tanResponse.ResponseItineraire(strItis).get(numIti-1);
-			String res=getCoordinatesFromAdress(iti.getAdresseDepart());
+			String res="";//getCoordinatesFromAdress(iti.getAdresseDepart());
 			
 			int i=0;
-			String type="";
+			String type="",nomArretPrecedent=iti.getAdresseDepart();
 			//pour chaque etape
 			for(Etape e: iti.getEtapes()){
-				String lngDep;
-				String latDep;
+				
 				//si on est dans le cas d'une marche, on se rend a une adresse ou on part d'une
 				//adresse donc on cherche les coordonnees GPS de la ou les adresses
 				if(e.getType()=="marche" || e.getType()==null)
@@ -164,29 +166,91 @@ public class AjaxServlet extends HttpServlet{
 				else
 					type="checkBus";
 				boolean trouve=false;
-				//on cherche si c'est un arret de bus
-				for(Stops stop : arrets){
-					if(!trouve){
-						if(stop.getStop_name().equals(e.getArretDest())){
-							res+=","+type+";"+stop.getStop_lat()+","+stop.getStop_lon();
-							trouve=true;
-						}
-					}
-				}
-				//sinon c'est une adresse
-				if(!trouve){
-					if(i>0)
-						res+=type+","+getCoordinatesFromAdress(e.getArretDest());
+				nantes.tan.Stops arret;
+				if(type.equals("checkPied")){
+					arret=getStop(nomArretPrecedent);
+					if(arret==null)//c'est une adresse
+						res+=getCoordinatesFromAdress(nomArretPrecedent+" 44")+","+type+","+e.toString()+";";
 					else
-						res+=type+","+getCoordinatesFromAdress(iti.getAdresseDepart());
+						res+=getCoordinatesFromAdress(e.getArretDest())+","+type+","+e.toString()+";";
 				}
-				trouve=false;
-			
-				e.toString();
+				else{//si on est en bus
+					String trajet;
+					trajet=nantes.tan.Tan.coordTrajetTan(nomArretPrecedent, e.getLigne(), e.getDirection(), e.getArretDest());
+					trajet=trajet.substring(0, trajet.indexOf(";"))+","+e.toString()+trajet.substring(trajet.indexOf(";"),trajet.length()-1);
+					res+=trajet;
+				}
+				
+				nomArretPrecedent=e.getArretDest();
 				i++;
 			}
-			resp.getWriter().write("iti;"+res+","+type);
+			//on enleve des etapes jusqu'a en avoir que 10 max ca rgoogle map n'en accepte pas plus
+			String[] tabEtapes=res.replace("m4", "m;4").replace("s4", "s;4").split(";");
+			int nbEtapes=iti.getEtapes().size();
+			List<String> tabEtapesDecomposee = new ArrayList<String>();
+			int a=0;
+			String typeEtape=tabEtapes[0].split(",")[2];
+			String etapeCourante="";
+			while(a<tabEtapes.length){
+				String tmp=tabEtapes[a];
+				if(tmp.split(",")[2].equals(typeEtape))
+					etapeCourante+=tmp+";";
+				else{
+					tabEtapesDecomposee.add(etapeCourante);
+					etapeCourante=tmp+";";
+					typeEtape=tmp.split(",")[2];
+				}
+				if(a==tabEtapes.length-1)
+					tabEtapesDecomposee.add(etapeCourante);
+				a++;
+			}
+			int nbGrdEtapes=0, nbPtEtape=0, lngMaxGrdEtape=0;
+			for(String tmp : tabEtapesDecomposee){
+				if(tmp.split(";").length>2)
+					nbGrdEtapes++;
+				else
+					nbPtEtape++;
+			}
+			lngMaxGrdEtape=(10-nbPtEtape)/nbGrdEtapes;
+			int b=0;
+			res="";
+			for(String tmp : tabEtapesDecomposee){
+				if(tmp.split(";").length>2)
+					res+=rmEtapes(tabEtapesDecomposee.get(b),lngMaxGrdEtape);
+				else 
+					res+=tabEtapesDecomposee.get(b);
+				b++;
+			}
+			resp.getWriter().write("iti;"+res.substring(0,res.length()));
 		}
+	}
+	
+	public String rmEtapes(String etape, int tailleMax){
+		double tMax=(double)tailleMax;
+		String res="";
+		String[] tab=etape.split(";");
+		int intervalleSup=(int) Math.ceil((double)(tab.length)/tMax);
+		int i=0;
+		while(i<tab.length){
+			res+=tab[i]+";";
+			i+=intervalleSup;
+		}
+		if(res.split(";").length<tailleMax)
+			res+=tab[tab.length-1]+";";
+		else
+			res=res.substring(0, res.lastIndexOf(";"))+";"+tab[tab.length-1]+";";
+		return res;
+	}
+	
+	//cette fonction retourne l'arret dont le nom est egla a la string passee en parametre
+	public nantes.tan.Stops getStop(String nom){
+		List<Stops> arrets = nantes.tan.Tan.genererListStops();
+		for(Stops stop : arrets){
+			if(stop.getStop_name().equals(nom)){
+				return stop;
+			}
+		}
+		return null;
 	}
 	
 	public String sansAccents(String in){
@@ -198,7 +262,7 @@ public class AjaxServlet extends HttpServlet{
 		String urlMap = "https://maps.googleapis.com/maps/api/geocode/json?address=";
 		URL urlDep;
 		try {
-			urlDep = new URL(urlMap+adresse.replace(" ", "+"));
+			urlDep = new URL(urlMap+adresse.replace(" ", "+")+"&key=AIzaSyBfOwNhtQC9k5HGyUPtqlnCbzmNbgjeQ6o");
 			URLConnection connection = urlDep.openConnection();
 			BufferedReader r = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 			while((tmp=r.readLine())!=null){
@@ -206,9 +270,10 @@ public class AjaxServlet extends HttpServlet{
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.severe(e.toString());
 		}
 		
+		//log.severe(strMap);
 		try {
 			JSONObject repMap = new JSONObject(strMap);
 			JSONArray arrMap = new JSONArray(repMap.get("results").toString());

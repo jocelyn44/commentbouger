@@ -37,15 +37,14 @@ public class Itineraire {
 		  param= param.substring(1, param.length()-1);
 		  String[] tparam = param.split("\\[");
 		  strEtapes= tparam[1].split("\\]")[0];
-		  log.severe(tparam[1]);
 		  String finparam=tparam[1].split("\\]")[1];
 		  String vrai;
 		  
 		// TODO Auto-generated constructor stub
 		  String[] tab = tparam[0].substring(0, tparam[0].length()-10).concat(finparam).split(",");
 		  for(int i=0;i<tab.length;i++){
-			  if(tab[i].split(":")[0].contains("adresseDepart")){
-				  adresseDepart=tab[i].split(":")[1].substring(1, tab[i].split(":")[1].length()-1);
+			  if(tab[i].split(":")[0].contains("arretDepart")){
+				  adresseDepart=tab[i].split(":")[2].substring(1, tab[i].split(":")[2].length()-2);
 			  }
 			  if(tab[i].replaceAll("\"", "").contains("adresseArrivee")){
 				  adresseArrivee=tab[i].split(":")[1].substring(1, tab[i].split(":")[1].length());

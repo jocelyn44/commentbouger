@@ -82,6 +82,8 @@ function choisir(val,qui){
 		xmlHttp.send(null);
 		document.getElementById("choixItisTan").className="choixInvis";
 		document.getElementById("choixItisTan").innerHTML="";
+		depChoisiTan="";
+		arrChoisiTan="";
 	}
 	else{
 		document.getElementById("choixPointTan"+qui).innerHTML="";

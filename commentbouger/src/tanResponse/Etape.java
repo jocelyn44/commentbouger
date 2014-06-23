@@ -27,7 +27,7 @@ public class Etape {
 						type="bus";
 						JSONObject d = new JSONObject(j.getString("arretStop"));
 						JSONObject l = new JSONObject(j.getString("ligne"));
-						arretDest=d.getString("libelle");
+						arretDest=com.nantes.commentbouger.Commun.sansAccents(d.getString("libelle"));
 						ligne=l.getString("numLigne");
 						direction=l.getString("terminus");
 						j.toString();
@@ -72,5 +72,10 @@ public class Etape {
 		return direction;
 	}
 	
+	public String toString(){
+		if(type=="bus")
+			return "Prendre la ligne "+ligne+" vers "+direction+" jusqu'a "+arretDest;
+		return "Marcher jusqu'a l'arret "+arretDest;
+	}
 	
 }

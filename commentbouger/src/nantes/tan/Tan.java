@@ -12,6 +12,9 @@ import java.util.List;
 public class Tan {
 
 	/**
+	 * 
+	 * L'objectif est de retourner toutes les positions GPS des arrets de bus d'une ligne situé entre deux arrets
+	 * 
 	 * @param nomArretDep
 	 * @param nomLigne
 	 * @param nomTerminus
@@ -19,9 +22,17 @@ public class Tan {
 	 * @return 
 	 */
 	public static String coordTrajetTan (String nomArretDep, String nomLigne, String nomTerminus, String nomArretArr){
+		
+		String typeCheck;
+		if(nomLigne.equals("1") || nomLigne.equals("2") || nomLigne.equals("3"))
+			typeCheck="checkTram";
+		else
+			typeCheck="checkBus";
+		// On génère les objets Shapes et Stops depuis les fichiers .txt
 		List<Shapes> shapes = genererListShapes();
 		List<Stops> stops = genererListStops();
 
+		// On récupère les coordonnées GPS 
 		List<String> lstCoordArr = new ArrayList<>();
 		List<String> lstCoordDep = new ArrayList<>();
 		for(int x = 1; x <= stops.size()-1; x++){
@@ -37,6 +48,7 @@ public class Tan {
 		Boolean bonneLigne = false;
 		List<String> lstCoord = new ArrayList<>();
 		int sens=1;
+		// Pour chaque ligne du fichier shapes.txt
 		for(int i = 1; i <= shapes.size()-1; i=i+sens){
 			String ligne = shapes.get(i).getShape_id().substring(0, shapes.get(i).getShape_id().length()-4);
 
@@ -52,8 +64,10 @@ public class Tan {
 			String coordTemp = shapes.get(i).getShape_pt_lat()+","+shapes.get(i).getShape_pt_lon()+";";
 			if (!coordTemp.equals(shapes.get(i-1).getShape_pt_lat()+","+shapes.get(i-1).getShape_pt_lon()+";")){
 
+				// Si on a trouvé les coordonnées de l'arret de départ
 				if(lstCoordDep.contains(shapes.get(i).getShape_pt_lat()+","+shapes.get(i).getShape_pt_lon())){
 
+					// Si on a trouve le bon numéro de ligne
 					if (ligne.equals(nomLigne)){
 						depTrouve =true;
 						bonneLigne = true;
@@ -61,19 +75,24 @@ public class Tan {
 					}
 				}
 				if(depTrouve){
-					lstCoord.add(shapes.get(i).getShape_pt_lat()+","+shapes.get(i).getShape_pt_lon()+";");
+					// Si on trouve une arret on le sauvegarde de la forme suivante : 47.21694925,-1.55679602,checkBus;47.22998380,-1.61681022,checkBus
+					lstCoord.add(shapes.get(i).getShape_pt_lat()+","+shapes.get(i).getShape_pt_lon()+","+typeCheck+";");
 
+					// Si on a trouvé les coordonnées de l'arret d'arrivé on Break;
 					if(lstCoordArr.contains(shapes.get(i).getShape_pt_lat()+","+shapes.get(i).getShape_pt_lon())){
 						break;
 					}
 				}	
 			}
 		}
+
+		// On retourne une String contenant l'ensemble des positions GPS des arrets d'une ligne
+		// Chaque arret de bus est représenté par sa latitude et sa longitude et le fait que se soit un arret de bus.
+		// 47.21694925,-1.55679602,checkBus;
 		String stringCoordGps="";
 		for (String coord : lstCoord){
-			stringCoordGps = stringCoordGps+coord+"\n";
+			stringCoordGps = stringCoordGps+coord;
 		}
-		System.out.println(stringCoordGps);
 		return stringCoordGps;
 
 	}

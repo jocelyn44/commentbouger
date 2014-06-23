@@ -237,24 +237,35 @@ function affCheminMultiple(depX, depY, arrX, arrY, passages){
 
 google.maps.event.addDomListener(window, 'load', initialize);
 
+///////////////
+//MODIF CAF //
+///////////////
 //fonction qui affiche une polyline (pour les tram)
-//parametre : myRoute string de coordonnees "lat,lng;lat,lng;lat,lng"
+//parametre : myRoute string de coordonnees "lat,lng,mode,libelle;lat,lng,mode,libelle;lat,lng,mode,libelle"
 function affPolyline(myRoute){
 	//on recupere tous les points
 	var tempRoute = myRoute.split(";");
 	//tableau de LatLng : liste des points de la polyline
 	var polyRoute =[];
-	for (var i = 0; i < tempRoute.length; i++) {
+	for (var i = 1; i < tempRoute.length; i++) {
 		var tempPoint = tempRoute[i].split(",");
 		polyRoute.push(new google.maps.LatLng( parseFloat(tempPoint[0]), parseFloat(tempPoint[1]) ));
+		if (i==1){
+			//on mets un marqueur sur le départ du trajet
+			var marker = new google.maps.Marker({
+			    position: new google.maps.LatLng( parseFloat(tempPoint[0]), parseFloat(tempPoint[1]) ),
+			    map: map,
+			    title:tempPoint[3]
+			});
+		}
 	}
 	//options de la polyline : nom de la map et du tableau de LatLng
 	var optionPoly = {
 			map:map,
 			path:polyRoute,
 			strokeColor: "#00FF00" ,
-          strokeOpacity: 0.8,
-          strokeWeight: 5};
+         strokeOpacity: 0.8,
+         strokeWeight: 5};
 	//creation de la polyline
 	var myPolyline = new google.maps.Polyline(optionPoly);
 	stepDisplay.open(map, myPolyline);
@@ -272,24 +283,30 @@ function traceRoute(){
 		if (tempPoint[2] == "checkTram"){
 			var myRoute = "";
 			do{
-				myRoute = myRoute + ";" + + tempPoint[0] + "," + tempPoint[1];
+				myRoute = myRoute + ";" + + tempPoint[0] + "," + tempPoint[1] + "," + tempPoint[2] + "," + tempPoint[3];
 				var tempPoint = tempRoute.shift().split(",");
 			}while(tempPoint[2] == "checkTram" && tempRoute.length > 0);
 			myRoute = myRoute + ";" + + tempPoint[0] + "," + tempPoint[1];
-			var temp = tempPoint[0] + "," + tempPoint[1] + "," + tempPoint[2];
+			var temp = tempPoint[0] + "," + tempPoint[1] + "," + tempPoint[2] + "," + tempPoint[3];
 			tempRoute.unshift(temp);
 			affPolyline(myRoute);
 		}
 		else{
 			//on définit le point de départ de l'étape
 			var start = new google.maps.LatLng( parseFloat(tempPoint[0]), parseFloat(tempPoint[1]) );
+			//on mets un marqueur sur le départ du trajet
+			var marker = new google.maps.Marker({
+			    position: start,
+			    map: map,
+			    title:tempPoint[3]
+			});
 			var mode;
-			//on définit le mode de transport et la couleur du trajet (voiture:rouge / bus:vert / vélo:orange / pied:bleu)
+			//on définit le mode de transport et la couleur du trajet (voiture:rouge / bus:vert / bicloo:orange / vélo:violet / pied:bleu)
 			switch (tempPoint[2]){
 			case "checkVoiture":
 				mode = google.maps.TravelMode.DRIVING;
 				modeFR="Voiture";
-				option = new google.maps.Polyline({
+				var option = new google.maps.Polyline({
 					strokeColor : "#FF0000",
 					strokeOpacity : 0.8,
 					strokeWeight : 5,
@@ -298,7 +315,8 @@ function traceRoute(){
 				break;
 			case "checkBus":
 				mode = google.maps.TravelMode.DRIVING;
-				modeFR="Voiture";option = new google.maps.Polyline({
+				modeFR="Voiture";
+				var option = new google.maps.Polyline({
 					strokeColor : "#00FF00",
 					strokeOpacity : 0.8,
 					strokeWeight : 5,
@@ -307,7 +325,8 @@ function traceRoute(){
 				break;
 			case "checkBicloo":
 				mode = google.maps.TravelMode.BICYCLING;
-				modeFR="Velo";option = new google.maps.Polyline({
+				modeFR="Velo";
+				var option = new google.maps.Polyline({
 					strokeColor : "#FF6600",
 					strokeOpacity : 0.8,
 					strokeWeight : 5,
@@ -316,7 +335,8 @@ function traceRoute(){
 				break;
 			case "checkVelo":
 				mode = google.maps.TravelMode.BICYCLING;
-				modeFR="Velo";option = new google.maps.Polyline({
+				modeFR="Velo";
+				var option = new google.maps.Polyline({
 					strokeColor : "#CC33FF",
 					strokeOpacity : 0.8,
 					strokeWeight : 5,
@@ -325,7 +345,8 @@ function traceRoute(){
 				break;
 			case "checkPied":
 				mode = google.maps.TravelMode.WALKING;
-				modeFR="A pied";option = new google.maps.Polyline({
+				modeFR="A pied";
+				var option = new google.maps.Polyline({
 					strokeColor : "#0066FF",
 					strokeOpacity : 0.8,
 					strokeWeight : 5,
@@ -352,6 +373,15 @@ function traceRoute(){
 			});
 		}	
 	}
+	else{
+		var tempPoint = tempRoute.shift().split(",");
+		//on mets un marqueur sur l'arrivée du trajet
+		var marker = new google.maps.Marker({
+		    position: new google.maps.LatLng( parseFloat(tempPoint[0]), parseFloat(tempPoint[1]) ),
+		    map: map,
+		    title:tempPoint[3]
+		});
+	}
 }
 ///////////////
 
@@ -360,7 +390,15 @@ function traceRoute(){
 ///////////////
 //fonction qui affiche plusieurs chemins a la suite
 function multiChemin(myRoute){
+	//on efface tous les anciens itinéraires
+	var manhattan = new google.maps.LatLng(47.19631701,-1.54258325);
+	var mapOptions = {
+		    zoom: 18,	
+		    center: manhattan
+		  }
+	map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 	//on recupere tous les points
 	tempRoute = myRoute.split(";");
 	traceRoute();
 }
+///////////////

@@ -93,4 +93,8 @@ public class Commun {
 		public static boolean plusPres(double Xref, double Yref, double X1, double Y1, double X2, double Y2){
 			return Commun.getDistanceOffline(Xref, Yref, X1, Y1)<Commun.getDistanceOffline(Xref, Yref, X2, Y2);
 		}
+		
+		public static String sansAccents(String s) {
+			return s.replace("ë", "e").replace("ê", "e").replace("é", "e").replace("è", "e").replace("à", "a");
+		}
 }
