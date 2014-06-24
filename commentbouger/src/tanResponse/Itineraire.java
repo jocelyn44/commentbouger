@@ -11,6 +11,7 @@ import com.google.appengine.labs.repackaged.org.json.JSONException;
 import com.google.appengine.labs.repackaged.org.json.JSONObject;
 
 public class Itineraire {
+	  String arretDepart;
 	  String adresseDepart;
 	  String strEtapes;
 	  List<Etape> etapes;
@@ -25,9 +26,11 @@ public class Itineraire {
 			JSONObject j = new JSONObject(param.substring(1, param.length()-1));
 			j.toString();
 			adresseDepart=j.getString("adresseDepart");
+			arretDepart=j.getString("arretDepart").split(":")[1];
+			arretDepart=arretDepart.substring(1,arretDepart.length()-2);
 			adresseArrivee=j.getString("adresseArrivee");
 			duree=Integer.parseInt(j.getString("duree").substring(0, 2));
-			etapes=creerEtape(j.getString("etapes"));
+			//etapes=creerEtape(j.getString("etapes"));
 			horraireDep=j.getString("heureDepart");
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -37,14 +40,15 @@ public class Itineraire {
 		  param= param.substring(1, param.length()-1);
 		  String[] tparam = param.split("\\[");
 		  strEtapes= tparam[1].split("\\]")[0];
-		  String finparam=tparam[1].split("\\]")[1];
+		 /* String finparam=tparam[1].split("\\]")[1];
 		  String vrai;
 		  
 		// TODO Auto-generated constructor stub
 		  String[] tab = tparam[0].substring(0, tparam[0].length()-10).concat(finparam).split(",");
+		  
 		  for(int i=0;i<tab.length;i++){
 			  if(tab[i].split(":")[0].contains("arretDepart")){
-				  adresseDepart=tab[i].split(":")[2].substring(1, tab[i].split(":")[2].length()-2);
+				  arretDepart=tab[i].split(":")[2].substring(1, tab[i].split(":")[2].length()-2);
 			  }
 			  if(tab[i].replaceAll("\"", "").contains("adresseArrivee")){
 				  adresseArrivee=tab[i].split(":")[1].substring(1, tab[i].split(":")[1].length());
@@ -52,12 +56,16 @@ public class Itineraire {
 			  if(tab[i].contains("duree")){
 				  duree=Integer.parseInt(tab[i].split(":")[1].substring(1, tab[i].split(":")[1].length()).substring(0, 2));
 			  }
-		  }
+		  }*/
 		  etapes=creerEtape(strEtapes);
 		  prix=((duree/60)+1)*1.5;
 	  }
 	  
-	  public List<Etape> creerEtape(String e){
+	  public String getArretDepart() {
+		return arretDepart;
+	}
+
+	public List<Etape> creerEtape(String e){
 		  List<Etape> res = new ArrayList<Etape>();
 		  try {
 			JSONArray etapes = new JSONArray("["+e+"]");
@@ -73,7 +81,7 @@ public class Itineraire {
 	  }
 
 	public String getAdresseDepart() {
-		return adresseDepart;
+		return arretDepart;
 	}
 
 	public String getStrEtapes() {

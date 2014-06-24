@@ -80,7 +80,7 @@ public class AjaxServlet extends HttpServlet{
 			final Logger log = Logger.getLogger(AjaxServlet.class.getName());
 			
 			String line=r.readLine();
-			line = sansAccents(line);
+			line = Commun.sansAccents(line);
 			if(line.contains("error")){
 				resp.getWriter().write(line);
 			}
@@ -102,7 +102,7 @@ public class AjaxServlet extends HttpServlet{
 			List<Adresse> listeAddresse = new ArrayList<Adresse>();
 			URLConnection connection = url.openConnection();
 			BufferedReader r = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-			String line = sansAccents(r.readLine());
+			String line = Commun.sansAccents(r.readLine());
 			String[] tab= line.substring(1, line.length()-1).split("\\[");
 			for(int j=0;j<tab.length;j++){
 				if(tab[j].contains("Addresses") || tab[j].contains("Points d'arr") || tab[j].contains("Stops") ){
@@ -126,7 +126,7 @@ public class AjaxServlet extends HttpServlet{
 			}
 			if(res=="")
 				res="Il n'y a pas de resultats, veuillez saisir une adresse plus precise ";
-			resp.getWriter().write("adresse;"+res.substring(0, res.length()-1)+";"+req.getParameter("qui"));
+			resp.getWriter().write("adresse;"+Commun.sansAccents(res.substring(0, res.length()-1)+";"+req.getParameter("qui")));
 		}
 		else if(quoi.equals("park")){
 			//dans le cas ou on veut trouver le parking le plus proche de l'arrivee
@@ -155,16 +155,20 @@ public class AjaxServlet extends HttpServlet{
 			String res="";//getCoordinatesFromAdress(iti.getAdresseDepart());
 			
 			int i=0;
-			String type="",nomArretPrecedent=iti.getAdresseDepart();
+			String type="",nomArretPrecedent;
 			//pour chaque etape
 			for(Etape e: iti.getEtapes()){
-				
 				//si on est dans le cas d'une marche, on se rend a une adresse ou on part d'une
 				//adresse donc on cherche les coordonnees GPS de la ou les adresses
-				if(e.getType()=="marche" || e.getType()==null)
+				if(e.getType()=="marche" || e.getType()==null){
 					type="checkPied";
-				else
+					nomArretPrecedent=iti.getAdresseDepart();
+				}
+				else{
 					type="checkBus";
+					nomArretPrecedent=iti.getArretDepart();
+				}
+				nomArretPrecedent=Commun.sansAccents(nomArretPrecedent);
 				boolean trouve=false;
 				nantes.tan.Stops arret;
 				if(type.equals("checkPied")){
@@ -251,10 +255,6 @@ public class AjaxServlet extends HttpServlet{
 			}
 		}
 		return null;
-	}
-	
-	public String sansAccents(String in){
-		return in.replace("\\u00e8", "e").replace("\\u00e9", "e");
 	}
 	
 	public String getCoordinatesFromAdress(String adresse){
