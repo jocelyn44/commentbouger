@@ -1,5 +1,7 @@
 package nantes.tan;
 
+import com.nantes.commentbouger.Commun;
+
 public class Stops {
 
 	public String stop_id;
@@ -19,7 +21,7 @@ public class Stops {
 			String location_type, String parent_station) {
 		super();
 		this.stop_id = stop_id;
-		this.stop_name = stop_name;
+		this.stop_name = Commun.transformTan(stop_name);
 		this.stop_desc = stop_desc;
 		this.stop_lat = stop_lat;
 		this.stop_lon = stop_lon;

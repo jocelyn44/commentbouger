@@ -180,7 +180,7 @@ public class AjaxServlet extends HttpServlet{
 				}
 				else{//si on est en bus
 					String trajet;
-					trajet=nantes.tan.Tan.coordTrajetTan(nomArretPrecedent, e.getLigne(), e.getDirection(), e.getArretDest());
+					trajet=nantes.tan.Tan.coordTrajetTan(nomArretPrecedent, e.getLigne(), e.getArretDest());
 					trajet=trajet.substring(0, trajet.indexOf(";"))+","+e.toString()+trajet.substring(trajet.indexOf(";"),trajet.length()-1);
 					res+=trajet;
 				}
@@ -189,7 +189,7 @@ public class AjaxServlet extends HttpServlet{
 				i++;
 			}
 			//on enleve des etapes jusqu'a en avoir que 10 max ca rgoogle map n'en accepte pas plus
-			String[] tabEtapes=res.replace("m4", "m;4").replace("s4", "s;4").split(";");
+/*			String[] tabEtapes=res.replace("m4", "m;4").replace("s4", "s;4").split(";");
 			int nbEtapes=iti.getEtapes().size();
 			List<String> tabEtapesDecomposee = new ArrayList<String>();
 			int a=0;
@@ -224,7 +224,7 @@ public class AjaxServlet extends HttpServlet{
 				else 
 					res+=tabEtapesDecomposee.get(b);
 				b++;
-			}
+			}*/
 			resp.getWriter().write("iti;"+res.substring(0,res.length()));
 		}
 	}

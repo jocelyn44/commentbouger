@@ -18,13 +18,12 @@
   	<div id="selecteur">
 	    <form action="commentbouger">
 			<p style="position:relative;left:5px;"> 
-			<div><img src="img/drapVert.png" alt="Départ :"/> <input type="text" id="dep" name="dep"/>
-			<img src="img/loupe.png" alt="loupe" style="position:relative;top:8px;" onclick="reqServ('bus')" id="loupe" class="loupeInvis"/>
-			<input type="text" id="arr" name="arr"/>
-			<img src="img/drapRouge.png" alt="Arrivée :"/></div>
+			<div><img src="img/drapVert.png" alt="Départ :"/> <input type="text" id="dep" name="dep"/><br/>
+			<img src="img/drapRouge.png" alt="Arrivée :"/><input type="text" id="arr" name="arr"/></div>
+			
 			<p align="center" style="position:center;">
 			<img src="img/voiture.png" alt="En voiture :" id="checkVoiture" onclick="changerApparence('checkVoiture')"/>
-			<img src="img/bus.png" alt="En bus / tram :" id="checkBus" onclick="document.getElementById('loupe').className=('loupeVis');"/> 
+			<img src="img/bus.png" alt="En bus / tram :" id="checkBus" onclick="reqServ('bus')"/> 
 			<img src="img/velo.png" alt="En velo :" id="checkVelo" onclick="changerApparence('checkVelo')"/> 
 			<img src="img/velo.png" alt="En bicloo :" id="checkBicloo" onclick="reqServ('bicloo');"/>
 			<img src="img/pied.png" alt="A pieds :" id="checkPied" onclick="changerApparence('checkPied')"/>

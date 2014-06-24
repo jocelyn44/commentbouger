@@ -94,6 +94,12 @@ public class Commun {
 			return Commun.getDistanceOffline(Xref, Yref, X1, Y1)<Commun.getDistanceOffline(Xref, Yref, X2, Y2);
 		}
 		
+		public static String transformTan(String s) {
+			s.trim();
+			s.toLowerCase();
+			return s.replace("ë", "e").replace("ê", "e").replace("é", "e").replace("è", "e").replace("à", "a").replace("ç", "c").replace("à", "a").replace("\\u00e8", "e").replace("\\u00e9", "e").replace("\u00e2", "a").replace("\u00e7", "c").replace("â", "a").replace("ô","a").replace(" ","").replace("-","").replace("'","");
+		}
+		
 		public static String sansAccents(String s) {
 			return s.replace("ë", "e").replace("ê", "e").replace("é", "e").replace("è", "e").replace("à", "a").replace("ç", "c").replace("à", "a").replace("\\u00e8", "e").replace("\\u00e9", "e").replace("\u00e2", "a").replace("\u00e7", "c").replace("â", "a");
 		}

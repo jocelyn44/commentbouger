@@ -9,6 +9,8 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.nantes.commentbouger.Commun;
+
 public class Tan {
 
 	/**
@@ -21,13 +23,16 @@ public class Tan {
 	 * @param nomArretArr
 	 * @return 
 	 */
-	public static String coordTrajetTan (String nomArretDep, String nomLigne, String nomTerminus, String nomArretArr){
+	public static String coordTrajetTan (String nomArretDep, String nomLigne,  String nomArretArr){
+
+		nomArretDep = Commun.transformTan(nomArretDep);
+		nomArretArr = Commun.transformTan(nomArretArr);
 		
 		String typeCheck;
-		if(nomLigne.equals("1") || nomLigne.equals("2") || nomLigne.equals("3"))
+		//if(nomLigne.equals("1") || nomLigne.equals("2") || nomLigne.equals("3"))
 			typeCheck="checkTram";
-		else
-			typeCheck="checkBus";
+		/*else
+			typeCheck="checkBus";*/
 		// On génère les objets Shapes et Stops depuis les fichiers .txt
 		List<Shapes> shapes = genererListShapes();
 		List<Stops> stops = genererListStops();
