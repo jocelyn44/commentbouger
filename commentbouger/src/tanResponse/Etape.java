@@ -74,8 +74,8 @@ public class Etape {
 	
 	public String toString(){
 		if(type=="bus")
-			return "Prendre la ligne "+ligne+" vers "+direction+" jusqu'a "+arretDest;
-		return "Marcher jusqu'a l'arret "+arretDest;
+			return "Prendre le "+ligne+" vers "+direction+" jusqu'a "+arretDest;
+		return "Marcher jusqu'a "+arretDest;
 	}
 	
 }

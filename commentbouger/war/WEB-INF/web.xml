@@ -12,6 +12,10 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 		<servlet-name>ajax</servlet-name>
 		<servlet-class>com.nantes.commentbouger.AjaxServlet</servlet-class>
 	</servlet>
+	<servlet>
+		<servlet-name>loginexample</servlet-name>
+		<servlet-class>com.nantes.commentbouger.LoginExampleServlet</servlet-class>
+	</servlet>
 	<servlet-mapping>
 		<servlet-name>commentbouger</servlet-name>
 		<url-pattern>/commentbouger</url-pattern>
@@ -19,6 +23,10 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	<servlet-mapping>
 		<servlet-name>ajax</servlet-name>
 		<url-pattern>/ajax</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>loginexample</servlet-name>
+		<url-pattern>/loginexample</url-pattern>
 	</servlet-mapping>
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>

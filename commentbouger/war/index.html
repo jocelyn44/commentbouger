@@ -7,27 +7,35 @@
     <script type="text/javascript"
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCty_tfQgPAUaz8zjBc9ckJ6oFfUH9EJlg&sensor=true">
     </script>
-    <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>     
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+    <link rel="stylesheet" href="css/jquery-ui-1.10.4.custom/css/cupertino/jquery-ui-1.10.4.custom.css">
+    <script src="css/jquery-ui-1.10.4.custom/js/jquery-1.10.2.js"></script>
+    <script src="css/jquery-ui-1.10.4.custom/js/jquery-ui-1.10.4.custom.js"></script>
+       
     <script type="text/javascript" src="JS/autre.js"></script>
     <script type="text/javascript" src="JS/query.js"></script>
     <script type="text/javascript" src="JS/script.js"></script>
-    </script>
   </head>
-  <body>
-  	<div hidden id="cache"></div>
+  <body id="body">
+  	<div hidden="hidden" id="cache"></div>
   	<div id="selecteur">
 	    <form action="commentbouger">
 			<p style="position:relative;left:5px;"> 
-			<div><img src="img/drapVert.png" alt="Départ :"/> <input type="text" id="dep" name="dep"/><br/>
-			<img src="img/drapRouge.png" alt="Arrivée :"/><input type="text" id="arr" name="arr"/></div>
+			<div id="dialog" title="Paramètres de l'itinéraire" style="overflow: hidden;">
+				  <div><img src="img/drapVert.png" alt="Départ :"/> <input value="Michelet 44000 Nantes" size="28" type="text" id="dep" name="dep"/><br/>
+				<img src="img/drapRouge.png" alt="Arrivée :"/> <input value="Commerce 44000 Nantes" size="28" type="text" id="arr" name="arr"/></div>
+				
+				<p align="center" style="position:center;">
+				<img src="img/bus.png" alt="En bus / tram :" id="checkBus" onclick="reqServ('bus')"/>
+				<img src="img/voiture.png" alt="En voiture :" id="checkVoiture" onclick="reqServ('checkVoiture')"/>
+				<img src="img/pied.png" alt="A pieds :" id="checkPied" onclick="reqServ('checkPied')"/>
+				<img src="img/velo.png" alt="En velo :" id="checkVelo" onclick="reqServ('checkVelo')"/> 
+				<img src="img/bicloo.png" alt="En bicloo :" id="checkBicloo" onclick="reqServ('bicloo');"/>
+				</p> 
+				<div id="bandeauBas" class=""></div>
+			</div>
 			
-			<p align="center" style="position:center;">
-			<img src="img/voiture.png" alt="En voiture :" id="checkVoiture" onclick="changerApparence('checkVoiture')"/>
-			<img src="img/bus.png" alt="En bus / tram :" id="checkBus" onclick="reqServ('bus')"/> 
-			<img src="img/velo.png" alt="En velo :" id="checkVelo" onclick="changerApparence('checkVelo')"/> 
-			<img src="img/velo.png" alt="En bicloo :" id="checkBicloo" onclick="reqServ('bicloo');"/>
-			<img src="img/pied.png" alt="A pieds :" id="checkPied" onclick="changerApparence('checkPied')"/>
-			</p> 
+			
 		</form>
     </div>
     <div id="comparateur">
@@ -47,11 +55,11 @@
 	      </tr>
 	    </table>
 	</div>
-	<div id="choixPointTandep" class="choixInvis,input-group-addon"></div>
-	<div id="choixPointTanarr" class="choixInvis,input-group-addon"></div>
+	<div id="choixPointTandep" class="choixInvis,input-group-addon" title="Choix du point de depart tan">Chargement des donnees Tan</div>
+	<div id="choixPointTanarr" class="choixInvis,input-group-addon" title="Choix du point d'arrivee tan">Chargement des donnees Tan</div>
 	<div id="choixItisTan" class="choixInvis"></div>
     <div id="map-canvas"></div>
     <div id="warnings_panel" style="width:100%;height:10%;text-align:center"></div>
-    <div id="bandeauBas" class="bandeau"><input type="button" onclick="placeMarker(47.19631701,-1.54258325,'red','bla');"/></div>
+    
   </body>
 </html>

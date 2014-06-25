@@ -138,12 +138,14 @@ public class AjaxServlet extends HttpServlet{
 			String[] tmp;
 			Bicloo b = new Bicloo();
 			//pour le point de depart
+			rep+=dep+",checkPied,Depart;";
 			tmp=dep.split(",");
-			rep+=b.findBiclooo(Double.parseDouble(tmp[0]), Double.parseDouble(tmp[1]));
+			rep+=b.findBiclooo(Double.parseDouble(tmp[0]), Double.parseDouble(tmp[1]))+",checkBicloo,Prendre un bicloo";
 			//pour le point d'arrivee
 			tmp=arr.split(",");
-			rep+=";"+b.findBiclooo(Double.parseDouble(tmp[0]), Double.parseDouble(tmp[1]));
+			rep+=";"+b.findBiclooo(Double.parseDouble(tmp[0]), Double.parseDouble(tmp[1]))+",checkPied,Rendre le bicloo;";
 			
+			rep+=arr+",checkPied,Arrivee";
 			resp.getWriter().write(rep);
 		}
 		else if(quoi.equals("choixIti")){
@@ -155,28 +157,27 @@ public class AjaxServlet extends HttpServlet{
 			String res="";//getCoordinatesFromAdress(iti.getAdresseDepart());
 			
 			int i=0;
-			String type="",nomArretPrecedent;
+			String type="",nomArretPrecedent="";
 			//pour chaque etape
 			for(Etape e: iti.getEtapes()){
 				//si on est dans le cas d'une marche, on se rend a une adresse ou on part d'une
 				//adresse donc on cherche les coordonnees GPS de la ou les adresses
-				if(e.getType()=="marche" || e.getType()==null){
+				if(e.getType()=="marche" || e.getType()==null)
 					type="checkPied";
-					nomArretPrecedent=iti.getAdresseDepart();
-				}
-				else{
+				else
 					type="checkBus";
+				if(nomArretPrecedent=="")
 					nomArretPrecedent=iti.getArretDepart();
-				}
+				
 				nomArretPrecedent=Commun.sansAccents(nomArretPrecedent);
 				boolean trouve=false;
 				nantes.tan.Stops arret;
 				if(type.equals("checkPied")){
 					arret=getStop(nomArretPrecedent);
-					if(arret==null)//c'est une adresse
+					if(null==arret)//c'est une adresse
 						res+=getCoordinatesFromAdress(nomArretPrecedent+" 44")+","+type+","+e.toString()+";";
 					else
-						res+=getCoordinatesFromAdress(e.getArretDest())+","+type+","+e.toString()+";";
+						res+=arret.stop_lat+","+arret.stop_lon+","+type+","+e.toString()+";";
 				}
 				else{//si on est en bus
 					String trajet;
@@ -188,69 +189,16 @@ public class AjaxServlet extends HttpServlet{
 				nomArretPrecedent=e.getArretDest();
 				i++;
 			}
-			//on enleve des etapes jusqu'a en avoir que 10 max ca rgoogle map n'en accepte pas plus
-/*			String[] tabEtapes=res.replace("m4", "m;4").replace("s4", "s;4").split(";");
-			int nbEtapes=iti.getEtapes().size();
-			List<String> tabEtapesDecomposee = new ArrayList<String>();
-			int a=0;
-			String typeEtape=tabEtapes[0].split(",")[2];
-			String etapeCourante="";
-			while(a<tabEtapes.length){
-				String tmp=tabEtapes[a];
-				if(tmp.split(",")[2].equals(typeEtape))
-					etapeCourante+=tmp+";";
-				else{
-					tabEtapesDecomposee.add(etapeCourante);
-					etapeCourante=tmp+";";
-					typeEtape=tmp.split(",")[2];
-				}
-				if(a==tabEtapes.length-1)
-					tabEtapesDecomposee.add(etapeCourante);
-				a++;
-			}
-			int nbGrdEtapes=0, nbPtEtape=0, lngMaxGrdEtape=0;
-			for(String tmp : tabEtapesDecomposee){
-				if(tmp.split(";").length>2)
-					nbGrdEtapes++;
-				else
-					nbPtEtape++;
-			}
-			lngMaxGrdEtape=(10-nbPtEtape)/nbGrdEtapes;
-			int b=0;
-			res="";
-			for(String tmp : tabEtapesDecomposee){
-				if(tmp.split(";").length>2)
-					res+=rmEtapes(tabEtapesDecomposee.get(b),lngMaxGrdEtape);
-				else 
-					res+=tabEtapesDecomposee.get(b);
-				b++;
-			}*/
+			
 			resp.getWriter().write("iti;"+res.substring(0,res.length()));
 		}
-	}
-	
-	public String rmEtapes(String etape, int tailleMax){
-		double tMax=(double)tailleMax;
-		String res="";
-		String[] tab=etape.split(";");
-		int intervalleSup=(int) Math.ceil((double)(tab.length)/tMax);
-		int i=0;
-		while(i<tab.length){
-			res+=tab[i]+";";
-			i+=intervalleSup;
-		}
-		if(res.split(";").length<tailleMax)
-			res+=tab[tab.length-1]+";";
-		else
-			res=res.substring(0, res.lastIndexOf(";"))+";"+tab[tab.length-1]+";";
-		return res;
 	}
 	
 	//cette fonction retourne l'arret dont le nom est egla a la string passee en parametre
 	public nantes.tan.Stops getStop(String nom){
 		List<Stops> arrets = nantes.tan.Tan.genererListStops();
 		for(Stops stop : arrets){
-			if(stop.getStop_name().equals(nom)){
+			if(Commun.transformTan(stop.getStop_name()).equals(Commun.transformTan(nom))){
 				return stop;
 			}
 		}

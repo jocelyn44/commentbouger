@@ -101,6 +101,6 @@ public class Commun {
 		}
 		
 		public static String sansAccents(String s) {
-			return s.replace("ë", "e").replace("ê", "e").replace("é", "e").replace("è", "e").replace("à", "a").replace("ç", "c").replace("à", "a").replace("\\u00e8", "e").replace("\\u00e9", "e").replace("\u00e2", "a").replace("\u00e7", "c").replace("â", "a");
+			return s.replace("ë", "e").replace("ê", "e").replace("é", "e").replace("è", "e").replace("à", "a").replace("ç", "c").replace("à", "a").replace("\\u00e8", "e").replace("\\u00e9", "e").replace("\u00e2", "a").replace("\u00e7", "c").replace("â", "a").replace("\u0027", "'");
 		}
 }

@@ -12,11 +12,8 @@ function reqServ(quoi){
 		reqPosTan("arr");
 	}
 	else{
-		if(quoi!="bus")
-			document.getElementById('loupe').className=('loupeVis');
 		//on convertie en coordonnees gps
 		var geocoder = new google.maps.Geocoder();
-		var url;
 		geocoder.geocode({
 		    "address": dep
 		}, function(results) {
@@ -30,13 +27,19 @@ function reqServ(quoi){
 			createXmlHttpRequest();
 			var tmp;
 			tmp=document.getElementById("cache").innerHTML.split(';');
-			url=chemin+"ajax?&quoi="+quoi+"&dep="+tmp[0]+"&arr="+tmp[1];
-			xmlHttp.open("GET", url);
-			xmlHttp.onreadystatechange=handleStateChange;
-			xmlHttp.send(null);
+			if(quoi=="bicloo"){
+				url=chemin+"ajax?&quoi="+quoi+"&dep="+tmp[0]+"&arr="+tmp[1];
+				xmlHttp.open("GET", url);
+				xmlHttp.onreadystatechange=handleStateChange;
+				xmlHttp.send(null);
+			}
+			else{
+				multiChemin(tmp[0]+","+quoi+";"+tmp[1]+","+quoi);
+			}
 		});
 	}
 }
+
 
 
 function affAdresse(repServ){
@@ -50,25 +53,25 @@ function affAdresse(repServ){
 	else{
 		var rep=repServ.split(';');
 		var qui= rep[rep.length-1];
-		var resHTML="<p><h2>Veuillez saisir votre ";
+		var resHTML="<p>Veuillez saisir votre ";
 		if(qui=="dep")
-			resHTML+="point de depart</h2>";
+			resHTML+="point de depart";
 		else
-			resHTML+="point d'arrivee</h2>";
+			resHTML+="point d'arrivee";
 		
 		for(var i=1;i<rep.length-1;i++){
 			var a = rep[i].split('[');
-			resHTML+="<input type='radio' onclick=\"choisir('"+a[1]+"','"+qui+"')\"/>"+utf8_decode(a[0])+"<br/>";
+			resHTML+="</p><input type='radio' onclick=\"choisir('"+a[1]+"','"+qui+"')\"/>"+utf8_decode(a[0])+"<br/>";
 		}
 		
-		resHTML+="<input type='button' value='Annuler' onclick=\"annuler('"+qui+"')\"/></p>";
+		//resHTML+="<input type='button' value='Annuler' onclick=\"annuler('"+qui+"')\"/></p>";
 		document.getElementById("choixPointTan"+qui).innerHTML=resHTML;
 	}
 
 	if(qui=="arr"){
 		reqPosTan("dep");
-		document.getElementById("choixPointTandep").className="choixVis";
-		document.getElementById("choixPointTanarr").className="choixVis";
+		//document.getElementById("choixPointTandep").className="choixVis";
+		//document.getElementById("choixPointTanarr").className="choixVis";
 	}
 		
 }
@@ -88,6 +91,7 @@ function choisir(val,qui){
 	else{
 		document.getElementById("choixPointTan"+qui).innerHTML="";
 		document.getElementById("choixPointTan"+qui).className="choixInvis";
+		$( "#choixPointTan"+qui ).dialog( "close" );
 		if(qui=="dep"){
 			depChoisiTan=val;
 		}
@@ -110,8 +114,9 @@ function annuler(qui){
 		document.getElementById("choixItisTan").innerHTML="";
 	}
 	else{
-	document.getElementById("choixPointTan"+qui).className="choixInvis";
-	document.getElementById("choixPointTan"+qui).innerHTML="";
+		$( "#choixPointTan"+qui ).dialog( "close" );
+		document.getElementById("choixPointTan"+qui).className="choixInvis";
+		document.getElementById("choixPointTan"+qui).innerHTML="";
 	if(qui=="dep")
 		depChoisiTan="";
 	if(qui=="arr")
@@ -128,17 +133,18 @@ function handleStateChange()
           var message = xmlHttp.responseText;
           var res=message.split(';');
           if(res[0]=="bicloo"){
-        	  placeMarker(parseFloat(res[1].split(',')[0]), parseFloat(res[1].split(',')[1]))
-        	  placeMarker(parseFloat(res[2].split(',')[0]), parseFloat(res[1].split(',')[1]))
+        	  multiChemin(message.substring(7,message.length));
+				map.setCenter( centreNantes );
           }
           if(res[0]=="bus"){
-        	  affItis(message.substring(3,message.length));
+        	  affItis(message.substring(4,message.length));
           }
           if(res[0]=="adresse"){
         	  affAdresse(message);
           }
           if(res[0]=="iti"){
         	  multiChemin(message.substring(4,message.length));
+				map.setCenter( centreNantes );
           }
           //alert(message);
 
