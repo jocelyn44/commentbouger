@@ -1,5 +1,8 @@
 package tanResponse;
 
+import com.google.appengine.labs.repackaged.org.json.JSONException;
+import com.google.appengine.labs.repackaged.org.json.JSONObject;
+
 public class Adresse {
 	private String type="";
 	private String nom="";
@@ -9,7 +12,17 @@ public class Adresse {
 	
 	public Adresse(String params){
 		String[] tab=params.split(",");
-		for(String s: tab){
+		try {
+			JSONObject j = new JSONObject(params);
+			ville=j.getString("ville");
+			nom= j.getString("nom");
+			cp= j.getString("cp");
+			id= j.getString("id");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		/*for(String s: tab){
 			if(s.contains("ville")){
 				ville=s.split(":")[1].substring(1, s.split(":")[1].length()-1);
 			}
@@ -22,7 +35,7 @@ public class Adresse {
 			if(s.contains("id")){
 				id=s.split(":")[1].substring(1, s.split(":")[1].length()-1);
 			}
-		}
+		}*/
 	}
 	
 	public String toString(){

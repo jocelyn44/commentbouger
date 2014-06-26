@@ -147,7 +147,8 @@ function handleStateChange()
         	  multiChemin(message.substring(4,message.length));
 				map.setCenter( centreNantes );
           }
-          //alert(message);
+          if(res[0]=="erreur")
+        	  alert(message.split(";")[1]);
 
              //document.getElementById("results").innerHTML=message;
             }

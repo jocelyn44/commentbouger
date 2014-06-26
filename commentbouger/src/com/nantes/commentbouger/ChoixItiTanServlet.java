@@ -42,6 +42,7 @@ public class ChoixItiTanServlet extends HttpServlet{
 		Itineraire iti;
 		iti= new tanResponse.ResponseItineraire(strItis).get(numIti-1);
 		String res="";//getCoordinatesFromAdress(iti.getAdresseDepart());
+		boolean erreur=false;
 
 		int i=0;
 		String type="",nomArretPrecedent="";
@@ -49,35 +50,43 @@ public class ChoixItiTanServlet extends HttpServlet{
 		for(Etape e: iti.getEtapes()){
 			//si on est dans le cas d'une marche, on se rend a une adresse ou on part d'une
 			//adresse donc on cherche les coordonnees GPS de la ou les adresses
-			if(e.getType()=="marche" || e.getType()==null)
-				type="checkPied";
-			else
-				type="checkBus";
-			if(nomArretPrecedent=="")
-				nomArretPrecedent=iti.getArretDepart();
-
-			nomArretPrecedent=Commun.sansAccents(nomArretPrecedent);
-			boolean trouve=false;
-			nantes.tan.Stops arret;
-			if(type.equals("checkPied")){
-				arret=getStop(nomArretPrecedent);
-				if(null==arret)//c'est une adresse
-					res+=getCoordinatesFromAdress(nomArretPrecedent+" 44")+","+type+","+e.toString()+";";
+			if(!erreur){
+				if(e.getType()=="marche" || e.getType()==null)
+					type="checkPied";
 				else
-					res+=arret.stop_lat+","+arret.stop_lon+","+type+","+e.toString()+";";
+					type="checkBus";
+				if(nomArretPrecedent=="")
+					nomArretPrecedent=iti.getArretDepart();
+	
+				nomArretPrecedent=Commun.sansAccents(nomArretPrecedent);
+				boolean trouve=false;
+				nantes.tan.Stops arret;
+				if(type.equals("checkPied")){
+					arret=getStop(nomArretPrecedent);
+					if(null==arret)//c'est une adresse
+						res+=getCoordinatesFromAdress(nomArretPrecedent+" 44")+","+type+","+e.toString()+";";
+					else
+						res+=arret.stop_lat+","+arret.stop_lon+","+type+","+e.toString()+";";
+				}
+				else{//si on est en bus
+					String trajet;
+					trajet=nantes.tan.Tan.coordTrajetTan(nomArretPrecedent, e.getLigne(), e.getArretDest());
+					if(!trajet.equals("")){
+						trajet=trajet.substring(0, trajet.indexOf(";"))+","+e.toString()+trajet.substring(trajet.indexOf(";"),trajet.length()-1);
+						res+=trajet;
+					}
+					else
+						erreur=true;
+				}
+	
+				nomArretPrecedent=e.getArretDest();
+				i++;
 			}
-			else{//si on est en bus
-				String trajet;
-				trajet=nantes.tan.Tan.coordTrajetTan(nomArretPrecedent, e.getLigne(), e.getArretDest());
-				trajet=trajet.substring(0, trajet.indexOf(";"))+","+e.toString()+trajet.substring(trajet.indexOf(";"),trajet.length()-1);
-				res+=trajet;
-			}
-
-			nomArretPrecedent=e.getArretDest();
-			i++;
-
-			resp.getWriter().write("iti;"+res.substring(0,res.length()));
 		}
+		if(!erreur)
+			resp.getWriter().write("iti;"+res.substring(0,res.length()));
+		else
+			resp.getWriter().write("erreur;Le calcul du trajet est impossible, car les donnees envoyees par la TAN sont anormales.");
 	}
 
 
