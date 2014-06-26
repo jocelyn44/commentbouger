@@ -25,6 +25,10 @@ public class ResponseItineraire {
 		}
 	}
 	
+	public List<Itineraire> getlItis() {
+		return lItis;
+	}
+
 	public String toString(){
 		String res="";
 		for(Itineraire i: lItis){

@@ -541,6 +541,7 @@ $(function() {
 $(function() {
     $( "#choixItisTan" ).dialog({
       autoOpen: false,
+      width: 450,
       show: {
         effect: "size",
         duration: 400

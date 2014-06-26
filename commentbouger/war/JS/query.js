@@ -17,8 +17,8 @@ function reqServ(quoi){
 	arr=document.getElementById("arr").value;
 
 	if(quoi=="bus" && dep!="" && arr!=""){
-		//reqPosTan("arr");
-		affItis("47.2034979,-1.5507195,checkPied,Marcher jusqu'a l'arret Wattignies;47.20396028,-1.54645317,checkTram,Prendre la ligne 2 vers Orvault-Grand Val jusqu'a Place du Cirque;47.20913625,-1.55022427,checkTram;47.21457190,-1.55587749,checkTram;47.21696213,-1.55705473,checkTram;47.21676964,-1.55704733,checkBus,Prendre la ligne C6 vers Hermeland jusqu'a Ambroise Pare;47.22038744,-1.57017375,checkBus;47.22224693,-1.58490511,checkBus;47.22899173,-1.59789479,checkBus;47.22908658,-1.60855912,checkBus;47.2318918,-1.6092175,checkPied,Marcher jusqu'a l'arret Allee CLAUDE ROUGET DE LISLE");
+		reqPosTan("arr");
+		//affItis("47.2034979,-1.5507195,checkPied,Marcher jusqu'a l'arret Wattignies;47.20396028,-1.54645317,checkTram,Prendre la ligne 2 vers Orvault-Grand Val jusqu'a Place du Cirque;47.20913625,-1.55022427,checkTram;47.21457190,-1.55587749,checkTram;47.21696213,-1.55705473,checkTram;47.21676964,-1.55704733,checkBus,Prendre la ligne C6 vers Hermeland jusqu'a Ambroise Pare;47.22038744,-1.57017375,checkBus;47.22224693,-1.58490511,checkBus;47.22899173,-1.59789479,checkBus;47.22908658,-1.60855912,checkBus;47.2318918,-1.6092175,checkPied,Marcher jusqu'a l'arret Allee CLAUDE ROUGET DE LISLE");
 	}
 	else{
 		$( "#affCompare" ).dialog( "open" );
@@ -40,7 +40,7 @@ function reqServ(quoi){
 			if(quoi=="bicloo"){
 				bicloo=true;
 				cntBicloo=0;
-				url=chemin+"ajax?&quoi="+quoi+"&dep="+tmp[0]+"&arr="+tmp[1];
+				url=chemin+"bicloo?&dep="+tmp[0]+"&arr="+tmp[1];
 				xmlHttp.open("GET", url);
 				xmlHttp.onreadystatechange=handleStateChange;
 				xmlHttp.send(null);
@@ -92,18 +92,19 @@ function affAdresse(repServ){
 function choisir(val,qui){
 	if(qui.indexOf("choixIti:")> -1){
 		createXmlHttpRequest();
-		url=chemin+"ajax?&quoi=choixIti&iti="+qui.split(":")[1];
+		url=chemin+"choixtan?&iti="+qui.split(":")[1];
 		xmlHttp.open("GET", url);
 		xmlHttp.onreadystatechange=handleStateChange;
 		xmlHttp.send(null);
-		document.getElementById("choixItisTan").className="choixInvis";
+		document.getElementById("choixItisTan").className="";
 		document.getElementById("choixItisTan").innerHTML="";
 		depChoisiTan="";
 		arrChoisiTan="";
+		$( "#choixItisTan" ).dialog( "close" );
 	}
 	else{
 		document.getElementById("choixPointTan"+qui).innerHTML="";
-		document.getElementById("choixPointTan"+qui).className="choixInvis";
+		document.getElementById("choixPointTan"+qui).className="";
 		$( "#choixPointTan"+qui ).dialog( "close" );
 		if(qui=="dep"){
 			depChoisiTan=val;
@@ -113,27 +114,11 @@ function choisir(val,qui){
 		}
 		if(depChoisiTan!="" && arrChoisiTan!="" && depChoisiTan!="noResults" && arrChoisiTan!="noResults"){
 			createXmlHttpRequest();
-			url=chemin+"ajax?&quoi=bus&dep="+depChoisiTan+"&arr="+arrChoisiTan;
+			url=chemin+"ititan?&dep="+depChoisiTan+"&arr="+arrChoisiTan;
 			xmlHttp.open("GET", url);
 			xmlHttp.onreadystatechange=handleStateChange;
 			xmlHttp.send(null);
 		}
-	}
-}
-
-function annuler(qui){
-	if(qui=="iti"){
-		document.getElementById("choixItisTan").className="choixInvis";
-		document.getElementById("choixItisTan").innerHTML="";
-	}
-	else{
-		$( "#choixPointTan"+qui ).dialog( "close" );
-		document.getElementById("choixPointTan"+qui).className="choixInvis";
-		document.getElementById("choixPointTan"+qui).innerHTML="";
-	if(qui=="dep")
-		depChoisiTan="";
-	if(qui=="arr")
-		arrChoisiTan="";
 	}
 }
 
@@ -176,7 +161,7 @@ function handleStateChange()
 function affItis(repServ){
 	var popup=document.getElementById("choixItisTan");
 	var rep=repServ.split(';');
-	var resHTML="<p><h2>Veuillez saisir votre itineraire</h2>";
+	var resHTML="<p>";
 	
 	for(var i=1;i<rep.length-1;i++){
 		var a = rep[i].split('/')[0].split(',');
@@ -187,7 +172,7 @@ function affItis(repServ){
 		}
 	}
 	
-	resHTML+="<input type='button' value='Annuler' onclick=\"annuler('iti')\"/></p>";
+	resHTML+="</p>";
 	popup.innerHTML=resHTML;
 	$( "#choixItisTan" ).dialog( "open" );
 	//document.getElementById("choixItisTan").className="choixVis";
@@ -215,7 +200,7 @@ function reqPosTan(qui){
 		elem=document.getElementById(qui);
 		ou = replaceAll(' ','-',elem.value);
 	}
-	url=chemin+"ajax?quoi=adresse&ou="+ou+"&qui="+qui;
+	url=chemin+"adresse?&ou="+ou+"&qui="+qui;
 	xmlHttp.open("GET", url);
 	xmlHttp.onreadystatechange=handleStateChange;
 	xmlHttp.send(null);

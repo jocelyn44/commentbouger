@@ -16,6 +16,38 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 		<servlet-name>loginservlet</servlet-name>
 		<servlet-class>com.nantes.commentbouger.LoginServlet</servlet-class>
 	</servlet>
+	<servlet>
+		<servlet-name>bicloo</servlet-name>
+		<servlet-class>com.nantes.commentbouger.BiclooServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>adresse</servlet-name>
+		<servlet-class>com.nantes.commentbouger.AdressServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>ititan</servlet-name>
+		<servlet-class>com.nantes.commentbouger.ReqItiTanServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>choixtan</servlet-name>
+		<servlet-class>com.nantes.commentbouger.ChoixItiTanServlet</servlet-class>
+	</servlet>ChoixItiTanServlet
+	<servlet-mapping>
+		<servlet-name>choixtan</servlet-name>
+		<url-pattern>/choixtan</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ititan</servlet-name>
+		<url-pattern>/ititan</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>adresse</servlet-name>
+		<url-pattern>/adresse</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>bicloo</servlet-name>
+		<url-pattern>/bicloo</url-pattern>
+	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>commentbouger</servlet-name>
 		<url-pattern>/commentbouger</url-pattern>

@@ -48,112 +48,17 @@ public class AjaxServlet extends HttpServlet{
 
 		resp.setContentType("text/plain");
 		
-		if(quoi.equals("bus")){
-			//dans le cas ou on veut trouver les arrets de bus
-			dep=dep.replaceAll("-", "+").replaceAll("\\|", "%7C").replace(" ", "+");
-			arr=arr.replaceAll("-", "+").replaceAll("\\|", "%7C").replace(" ", "+");
-			String heure;
-			heure=(Calendar.getInstance().get(Calendar.YEAR))+"-";
-			if(Integer.toString(Calendar.getInstance().get(Calendar.MONTH)).length()<2)
-				heure+="0"+(Calendar.getInstance().get(Calendar.MONTH)+1)+"-";
-			else
-				heure+=(Calendar.getInstance().get(Calendar.MONTH)+1)+"-";
-			if(Integer.toString(Calendar.getInstance().get(Calendar.DAY_OF_MONTH)).length()<2)
-				heure+="0"+Calendar.getInstance().get(Calendar.DAY_OF_MONTH)+"+";
-			else
-				heure+=Calendar.getInstance().get(Calendar.DAY_OF_MONTH)+"+";
-			if(Integer.toString(Calendar.getInstance().get(Calendar.HOUR_OF_DAY)).length()<2)
-				heure+="0"+Calendar.getInstance().get(Calendar.HOUR_OF_DAY)+"%3A";
-			else
-				heure+=Calendar.getInstance().get(Calendar.HOUR_OF_DAY)+"%3A";
-			if(Integer.toString(Calendar.getInstance().get(Calendar.MINUTE)).length()<2)
-				heure+="0"+Calendar.getInstance().get(Calendar.MINUTE);
-			else
-				heure+=Calendar.getInstance().get(Calendar.MINUTE);
-			//heure=
-			String surl="https://www.tan.fr/ewp/mhv.php/itineraire/resultat.json?depart="+ dep+"&arrive="+arr+"&type=0&accessible=0&temps="+heure+"&retour=0";
-			URL url = new URL(surl);
-			
-			
-			URLConnection connection = url.openConnection();
-			BufferedReader r = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-			final Logger log = Logger.getLogger(AjaxServlet.class.getName());
-			
-			String line=r.readLine();
-			line = Commun.sansAccents(line);
-			if(line.contains("error")){
-				resp.getWriter().write(line);
-			}
-			else{
-				HttpSession s = req.getSession();
-				ResponseItineraire response = new tanResponse.ResponseItineraire(line);
-	 			s.setAttribute("itineraires", line);	
-				resp.getWriter().write("bus;"+response.toString());
-			}
- 			
-		}
-		else if(quoi.equals("adresse")){
-			//dans le cas ou on veut trouver les arrets de bus
-			String ou = req.getParameter("ou");
-			ou.replaceAll(" ", "+");
-			String surl="https://www.tan.fr/ewp/mhv.php/itineraire/address.json?&nom="+ou;
-			URL url = new URL(surl);
-			
-			List<Adresse> listeAddresse = new ArrayList<Adresse>();
-			URLConnection connection = url.openConnection();
-			BufferedReader r = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-			String line = Commun.sansAccents(r.readLine());
-			String[] tab= line.substring(1, line.length()-1).split("\\[");
-			for(int j=0;j<tab.length;j++){
-				if(tab[j].contains("Addresses") || tab[j].contains("Points d'arr") || tab[j].contains("Stops") ){
-					try {
-						JSONArray add = new JSONArray("["+tab[j+1]+"]");
-						for(int i=0;i<add.length();i++){
-							listeAddresse.add(new Adresse(add.get(i).toString()));
-						}
-						
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				j++;
-			}
-			String res="";
-			for(Adresse a: listeAddresse){
-				if(a.getNom().equalsIgnoreCase(a.getVille())!=true)
-					res+=a.toString()+";";
-			}
-			if(res=="")
-				res="Il n'y a pas de resultats, veuillez saisir une adresse plus precise ";
-			resp.getWriter().write("adresse;"+Commun.sansAccents(res.substring(0, res.length()-1)+";"+req.getParameter("qui")));
-		}
-		else if(quoi.equals("park")){
+		if(quoi.equals("park")){
 			//dans le cas ou on veut trouver le parking le plus proche de l'arrivee
 			resp.getWriter().write("[parking]");
-		}
-		else if(quoi.equals("bicloo")){
-			//dans le cas ou on veut trouver les stations de bicloo proche de depart arrivee
-			String rep="bicloo;";
-			String[] tmp;
-			Bicloo b = new Bicloo();
-			//pour le point de depart
-			rep+=dep+",checkPied,Depart;";
-			tmp=dep.split(",");
-			rep+=b.findBiclooo(Double.parseDouble(tmp[0]), Double.parseDouble(tmp[1]))+",checkBicloo,Prendre un bicloo";
-			//pour le point d'arrivee
-			tmp=arr.split(",");
-			rep+=";"+b.findBiclooo(Double.parseDouble(tmp[0]), Double.parseDouble(tmp[1]))+",checkPied,Rendre le bicloo;";
-			
-			rep+=arr+",checkPied,Arrivee";
-			resp.getWriter().write(rep);
 		}
 		else if(quoi.equals("choixIti")){
 			//on récupere le numero de l'itineraire
 			int numIti= Integer.parseInt(req.getParameter("iti"));
 			HttpSession s = req.getSession();
 			String strItis = (String) s.getAttribute("itineraires");
-			Itineraire iti = new tanResponse.ResponseItineraire(strItis).get(numIti-1);
+			Itineraire iti;
+			iti= new tanResponse.ResponseItineraire(strItis).get(numIti-1);
 			String res="";//getCoordinatesFromAdress(iti.getAdresseDepart());
 			
 			int i=0;
