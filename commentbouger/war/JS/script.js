@@ -153,7 +153,7 @@ function majTempsTableau(start, end){
 				dist = response.routes[0].legs[0].distance.text;
 				duree= response.routes[0].legs[0].duration.text;
 				if(modeFR=="Voiture"){
-					prix=dist.split(" ")[0]/100*6*1,5;
+					prix=parseInt(dist)/100*6*1,5;
 					prix=Math.round(prix*100)/100+"€";
 				}
 				if(modeFR=="Velo")
