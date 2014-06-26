@@ -2,7 +2,10 @@
 //var chemin = "http://1-dot-nantes-commentbouger.appspot.com/";
 //var chemin = "http://localhost:8888/";
 var chemin=document.URL;
-
+var tempBicloo=0;
+var distBic=0;
+var bicloo=true;
+var cntBicloo=0;
 var map;
 var directionsDisplay;
 var directionsService;
@@ -125,10 +128,13 @@ function changerApparence(quoi){
 
 function majTempsTableau(start, end){
 	var mode= [google.maps.TravelMode.DRIVING, google.maps.TravelMode.BICYCLING, google.maps.TravelMode.WALKING];
-	var affRes = document.getElementById("bandeauBas");
-	affRes.innerHTML=("<table border='1' style='border-collapse:collapse;'><tr><th>Mode</th><th>Distance</th><th>Duree</th><th>Prix</th></tr>");
+	var affRes = document.getElementById("affCompare");
+	affRes.innerHTML=("<table class=\"table table-striped\"><tr><th>Mode</th><th>Distance</th><th>Duree</th><th>Prix</th></tr>");
 	var duree;
 	var dist;
+	if(bicloo==true){
+		affRes.innerHTML=affRes.innerHTML.substring(0, affRes.innerHTML.length-16)+"<tr><td>Bicloo</td><td>"+distBic+" km</td><td>"+tempBicloo+" min</td><td>1€</td></tr></table>";
+	}
 	for(var i=0;i<3;i++){
 		var request = {
 				origin: start,
@@ -143,14 +149,28 @@ function majTempsTableau(start, end){
 				if(response.Pb.travelMode=="DRIVING"){modeFR="Voiture";}
 				if(response.Pb.travelMode=="BICYCLING"){modeFR="Velo";}
 				if(response.Pb.travelMode=="WALKING"){modeFR="A pied";}
-
+				var prix;
 				dist = response.routes[0].legs[0].distance.text;
 				duree= response.routes[0].legs[0].duration.text;
-				affRes.innerHTML=affRes.innerHTML.substring(0, affRes.innerHTML.length-8)+("<tr><td>"+modeFR+"</td><td>"+dist+"</td><td>"+duree+"</td><td>rab</td></tr></table>");
+				if(modeFR=="Voiture"){
+					prix=dist.split(" ")[0]/100*6*1,5;
+					prix=Math.round(prix*100)/100+"€";
+				}
+				if(modeFR=="Velo")
+					prix="De la sueur";
+				if(modeFR=="A pied")
+					prix="Du courage";
+				
+				affRes.innerHTML=affRes.innerHTML.substring(0, affRes.innerHTML.length-8)+("<tr><td>"+modeFR+"</td><td>"+dist+"</td><td>"+duree+"</td><td>"+prix+"</td></tr></table>");
+				if(bicloo==true){
+					distBic=0;
+					tempBicloo=0;
+					bicloo=0;
+					cntBicloo=0;
+				}
 			}
 		});
-	}
-	//affRes.innerHTML=resHtml;
+	}	
 }
 
 function calcRoute() {
@@ -206,6 +226,28 @@ function showSteps(directionResult,affAll) {
 
 }
 
+function majTabTanBic(quoi){
+	var start,end;
+	dep=document.getElementById("dep").value;
+	arr=document.getElementById("arr").value;
+	var geocoder = new google.maps.Geocoder();
+	geocoder.geocode({
+	    "address": dep
+	}, function(results) {
+		document.getElementById("cache").innerHTML=results[0].geometry.location.lat()+","+results[0].geometry.location.lng();
+	});
+	
+	geocoder.geocode({
+	    "address": arr
+	}, arr=function(results) {
+		document.getElementById("cache").innerHTML+=";"+results[0].geometry.location.lat()+","+results[0].geometry.location.lng();
+		createXmlHttpRequest();
+		var tmp;
+		tmp=document.getElementById("cache").innerHTML.split(';');
+		majTempsTableau(tmp[0], tmp[1])
+	});
+}
+
 function attachInstructionText(marker, text) {
 	google.maps.event.addListener(marker, 'click', function() {
 		// Open an info window when the marker is clicked on,
@@ -215,31 +257,42 @@ function attachInstructionText(marker, text) {
 	});
 }
 
+-google.maps.event.addDomListener(window, 'load', initialize);
+
 
 ///////////////
 //MODIF CAF //
 ///////////////
 //fonction qui place un marker et eventuellement une infobulle
 //parametres : google latlng et libelle de l'infobulle
-function placeMarker(latlng, libelle){
-	var marker = new google.maps.Marker({
-		position: latlng,
-		map: map
-	});
-	if (libelle != null && libelle != "" && libelle != "undefined"){
-		var myWindowOptions = {
-				content:'<p>' + libelle + '</p>'
-		};
-		var myInfoWindow = new google.maps.InfoWindow(myWindowOptions);
-		myInfoWindow.open(map,marker);
-//		Affichage de la fenêtre au click sur le marker
-		google.maps.event.addListener(marker, 'click', function() {
-			myInfoWindow.open(map,marker);
-		});
-	}
+function placeMarker(latlng, libelle,mode){
+var image;
+if (mode == "arrivee"){
+image = "http://maps.google.com/mapfiles/ms/icons/red-dot.png";
 }
-
--google.maps.event.addDomListener(window, 'load', initialize);
+else if(debut){
+image = "http://maps.google.com/mapfiles/ms/icons/green-dot.png";
+}
+else{
+image = "http://maps.google.com/mapfiles/ms/icons/blue-dot.png";
+}
+var marker = new google.maps.Marker({
+position: latlng,
+map: map,
+icon:image
+});
+if (libelle != null && libelle != "" && libelle != "undefined"){
+var myWindowOptions = {
+	content:'<p>' + libelle + '</p>'
+};
+var myInfoWindow = new google.maps.InfoWindow(myWindowOptions);
+myInfoWindow.open(map,marker);
+// Affichage de la fenêtre au click sur le marker
+google.maps.event.addListener(marker, 'click', function() {
+	myInfoWindow.open(map,marker);
+});
+}
+}
 
 ///////////////
 //MODIF CAF //
@@ -247,32 +300,33 @@ function placeMarker(latlng, libelle){
 //fonction qui affiche une polyline (pour les tram)
 //parametre : myRoute string de coordonnees "lat,lng;lat,lng;lat,lng"
 function affPolyline(myRoute){
-//	on recupere tous les points
-	var tempRoute = myRoute.split(";");
-//	tableau de LatLng : liste des points de la polyline
-	var polyRoute =[];
-	for (var i = 1; i < tempRoute.length; i++) {
-		var tempPoint = tempRoute[i].split(",");
-		polyRoute.push(new google.maps.LatLng( parseFloat(tempPoint[0]), parseFloat(tempPoint[1]) ));
-		if (i==1){
-//			on mets un marqueur sur le départ du trajet
-			placeMarker(new google.maps.LatLng( parseFloat(tempPoint[0]), parseFloat(tempPoint[1]) ),tempPoint[3]);
-		}
-		else if (tempPoint[3] != null && tempPoint[3] != "" && tempPoint[3] != "undefined"){
-			placeMarker(new google.maps.LatLng( parseFloat(tempPoint[0]), parseFloat(tempPoint[1]) ),tempPoint[3]);
-		}
-	}
-//	options de la polyline : nom de la map et du tableau de LatLng
-	var optionPoly = {
-			map:map,
-			path:polyRoute,
-			strokeColor: "#00CC00" ,
-			strokeOpacity: 0.8,
-			strokeWeight: 5};
-//	creation de la polyline
-	var myPolyline = new google.maps.Polyline(optionPoly);
-	stepDisplay.open(map, myPolyline);
-	traceRoute();
+//on recupere tous les points
+var tempRoute = myRoute.split(";");
+//tableau de LatLng : liste des points de la polyline
+var polyRoute =[];
+for (var i = 1; i < tempRoute.length; i++) {
+var tempPoint = tempRoute[i].split(",");
+polyRoute.push(new google.maps.LatLng( parseFloat(tempPoint[0]), parseFloat(tempPoint[1]) ));
+if (i==1){
+//on mets un marqueur sur le départ du trajet
+placeMarker(new google.maps.LatLng( parseFloat(tempPoint[0]), parseFloat(tempPoint[1]) ),tempPoint[3],"");
+debut = false;
+}
+else if (tempPoint[3] != null && tempPoint[3] != "" && tempPoint[3] != "undefined"){
+placeMarker(new google.maps.LatLng( parseFloat(tempPoint[0]), parseFloat(tempPoint[1]) ),tempPoint[3],"");
+}
+}
+//options de la polyline : nom de la map et du tableau de LatLng
+var optionPoly = {
+map:map,
+path:polyRoute,
+strokeColor: "#00CC00" ,
+strokeOpacity: 0.8,
+strokeWeight: 5};
+//creation de la polyline
+var myPolyline = new google.maps.Polyline(optionPoly);
+stepDisplay.open(map, myPolyline);
+traceRoute();
 }
 ///////////////
 
@@ -280,94 +334,115 @@ function affPolyline(myRoute){
 //MODIF CAF //
 ///////////////
 function traceRoute(){
-	if (tempRoute.length > 1){
-		var tempPoint = tempRoute.shift().split(",");
-//		on teste le mode de transport : si tram -> polyline, sinon trajet normal
-		if (tempPoint[2] == "checkTram" || tempPoint[2] == "checkBus"){
-			var myRoute = "";
-			do{
-				myRoute = myRoute + ";" + + tempPoint[0] + "," + tempPoint[1] + "," + tempPoint[2] + "," + tempPoint[3];
-				var tempPoint = tempRoute.shift().split(",");
-			}while((tempPoint[2] == "checkTram" || tempPoint[2] == "checkBus") && tempRoute.length > 0);
-			myRoute = myRoute + ";" + + tempPoint[0] + "," + tempPoint[1];
-			var temp = tempPoint[0] + "," + tempPoint[1] + "," + tempPoint[2] + "," + tempPoint[3];
-			tempRoute.unshift(temp);
-			affPolyline(myRoute);
-		}
-		else{
-//			on définit le point de départ de l'étape
-			var start = new google.maps.LatLng( parseFloat(tempPoint[0]), parseFloat(tempPoint[1]) );
-//			on mets un marqueur sur le départ du trajet
-			placeMarker(new google.maps.LatLng( parseFloat(tempPoint[0]), parseFloat(tempPoint[1]) ),tempPoint[3]);
-			var mode;
-//			on définit le mode de transport et la couleur du trajet (voiture:rouge / bus:vert / bicloo:orange / vélo:violet / pied:bleu)
-			switch (tempPoint[2]){
-			case "checkVoiture":
-				mode = google.maps.TravelMode.DRIVING;
-				modeFR="Voiture";
-				var option = new google.maps.Polyline({
-					strokeColor : "#FF0000",
-					strokeOpacity : 0.8,
-					strokeWeight : 5,
-					map : map
-				});
-				break;
-			case "checkBicloo":
-				mode = google.maps.TravelMode.BICYCLING;
-				modeFR="Velo";
-				var option = new google.maps.Polyline({
-					strokeColor : "#FF6600",
-					strokeOpacity : 0.8,
-					strokeWeight : 5,
-					map : map
-				});
-				break;
-			case "checkVelo":
-				mode = google.maps.TravelMode.BICYCLING;
-				modeFR="Velo";
-				var option = new google.maps.Polyline({
-					strokeColor : "#CC33FF",
-					strokeOpacity : 0.8,
-					strokeWeight : 5,
-					map : map
-				});
-				break;
-			case "checkPied":
-				mode = google.maps.TravelMode.WALKING;
-				modeFR="A pied";
-				var option = new google.maps.Polyline({
-					strokeColor : "#0066FF",
-					strokeOpacity : 0.8,
-					strokeWeight : 5,
-					map : map
-				});
-				break;
-			}
-//			on définit le point d'arrivée
-			tempPoint = tempRoute[0].split(",");
-			var end = new google.maps.LatLng( parseFloat(tempPoint[0]), parseFloat(tempPoint[1]) );
-			var request = {
-					origin:start,
-					destination:end,
-					travelMode: mode
-			};
-			directionsDisplay = new google.maps.DirectionsRenderer({suppressMarkers: true,polylineOptions:option});
-			directionsDisplay.setMap(map);
-//			on affiche le trajet
-			directionsService.route(request, function(result, status) {
-				if (status == google.maps.DirectionsStatus.OK) {
-					directionsDisplay.setDirections(result);
-					traceRoute();
-				}
-			});
-		}	
-	}
-	else{
-		var tempPoint = tempRoute.shift().split(",");
-//		on mets un marqueur sur l'arrivée du trajet
-		placeMarker(new google.maps.LatLng( parseFloat(tempPoint[0]), parseFloat(tempPoint[1]) ),tempPoint[3]);
-	}
+if (tempRoute.length > 1){
+var tempPoint = tempRoute.shift().split(",");
+//on teste le mode de transport : si tram -> polyline, sinon trajet normal
+if (tempPoint[2] == "checkTram" || tempPoint[2] == "checkBus"){
+var myRoute = "";
+do{
+	myRoute = myRoute + ";" + + tempPoint[0] + "," + tempPoint[1] + "," + tempPoint[2] + "," + tempPoint[3];
+	var tempPoint = tempRoute.shift().split(",");
+}while((tempPoint[2] == "checkTram" || tempPoint[2] == "checkBus") && tempRoute.length > 0);
+myRoute = myRoute + ";" + + tempPoint[0] + "," + tempPoint[1];
+var temp = tempPoint[0] + "," + tempPoint[1] + "," + tempPoint[2] + "," + tempPoint[3];
+tempRoute.unshift(temp);
+affPolyline(myRoute);
 }
+else{
+//on définit le point de départ de l'étape
+var start = new google.maps.LatLng( parseFloat(tempPoint[0]), parseFloat(tempPoint[1]) );
+//on mets un marqueur sur le départ du trajet
+placeMarker(new google.maps.LatLng( parseFloat(tempPoint[0]), parseFloat(tempPoint[1]) ),tempPoint[3],"");
+debut = false;
+var mode;
+//on définit le mode de transport et la couleur du trajet (voiture:rouge / bus:vert / bicloo:orange / vélo:violet / pied:bleu)
+switch (tempPoint[2]){
+case "checkVoiture":
+	mode = google.maps.TravelMode.DRIVING;
+	modeFR="Voiture";
+	var option = new google.maps.Polyline({
+		strokeColor : "#FF0000",
+		strokeOpacity : 0.8,
+		strokeWeight : 5,
+		map : map
+	});
+	break;
+case "checkBicloo":
+	mode = google.maps.TravelMode.BICYCLING;
+	modeFR="Velo";
+	var option = new google.maps.Polyline({
+		strokeColor : "#FF6600",
+		strokeOpacity : 0.8,
+		strokeWeight : 5,
+		map : map
+	});
+	break;
+case "checkVelo":
+	mode = google.maps.TravelMode.BICYCLING;
+	modeFR="Velo";
+	var option = new google.maps.Polyline({
+		strokeColor : "#CC33FF",
+		strokeOpacity : 0.8,
+		strokeWeight : 5,
+		map : map
+	});
+	break;
+case "checkPied":
+	mode = google.maps.TravelMode.WALKING;
+	modeFR="A pied";
+	var option = new google.maps.Polyline({
+		strokeColor : "#0066FF",
+		strokeOpacity : 0.8,
+		strokeWeight : 5,
+		map : map
+	});
+	break;
+}
+//on définit le point d'arrivée
+tempPoint = tempRoute[0].split(",");
+var end = new google.maps.LatLng( parseFloat(tempPoint[0]), parseFloat(tempPoint[1]) );
+var request = {
+	origin:start,
+	destination:end,
+	travelMode: mode
+};
+directionsDisplay = new google.maps.DirectionsRenderer({suppressMarkers: true,polylineOptions:option});
+directionsDisplay.setMap(map);
+//on affiche le trajet
+directionsService.route(request, function(result, status) {
+	if (status == google.maps.DirectionsStatus.OK) {
+		if(bicloo==true){
+			cntBicloo+=1;
+			var tmp=result.routes[0].legs[0].duration.text;
+			tmp=tmp.split(" ")[0];
+			if(tmp!="Undefined")
+				tempBicloo+=parseInt(tmp);
+			tmp=result.routes[0].legs[0].distance.text;
+			tmp=tmp.split(" ")[0];//.split(".")[0];
+			if(tmp!="Undefined")
+				distBic+=parseFloat(tmp);
+			if(cntBicloo==3)
+				majTabTanBic("bicloo");
+			
+		}
+		directionsDisplay.setDirections(result);
+		traceRoute();
+	}
+});
+}	
+}
+else{
+//on place un marqueur sur l'arrivee
+tempPoint = tempRoute[0].split(",");
+placeMarker(new google.maps.LatLng( parseFloat(tempPoint[0]), parseFloat(tempPoint[1]) ),tempPoint[3],"arrivee");
+}
+}
+
+function centreMap(){
+var zoneMarqueurs = new google.maps.LatLngBounds(new google.maps.LatLng(47.156458, -1.688747),new google.maps.LatLng(47.293787, -1.428852));
+map.fitBounds(zoneMarqueurs);
+}
+
 ///////////////
 
 ///////////////
@@ -375,16 +450,17 @@ function traceRoute(){
 ///////////////
 //fonction qui affiche plusieurs chemins a la suite
 function multiChemin(myRoute){
-//	on efface tous les anciens itinéraires
-	var manhattan = new google.maps.LatLng(47.19631701,-1.54258325);
-	var mapOptions = {
-			zoom: 12,	
-			center: centreNantes
-	}
-	map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-//	on recupere tous les points
-	tempRoute = myRoute.split(";");
-	traceRoute();
+//on efface tous les anciens itinéraires
+var manhattan = new google.maps.LatLng(47.19631701,-1.54258325);
+mapOptions = {
+zoom: 18,	
+center: manhattan
+}
+map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+//on recupere tous les points
+tempRoute = myRoute.split(";");
+debut = true;
+traceRoute();
 }
 ///////////////
 
@@ -444,3 +520,35 @@ $(function() {
       }
     });
   });
+
+$(function() {
+    $( "#affCompare" ).dialog({
+      autoOpen: false,
+      position: { my: "left middle", at: "left middle", of: window },
+      width: 380,
+      height: 250,
+      show: {
+        effect: "size",
+        duration: 400
+      },
+      hide: {
+        effect: "size",
+        duration: 400
+      }
+    });
+  });
+
+$(function() {
+    $( "#choixItisTan" ).dialog({
+      autoOpen: false,
+      show: {
+        effect: "size",
+        duration: 400
+      },
+      hide: {
+        effect: "size",
+        duration: 400
+      }
+    });
+  });
+
