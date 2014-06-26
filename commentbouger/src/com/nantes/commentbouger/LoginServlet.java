@@ -11,15 +11,15 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 
 @SuppressWarnings("serial")
-public class LoginExampleServlet extends HttpServlet {
+public class LoginServlet extends HttpServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
 
 		UserService userService = UserServiceFactory.getUserService();
 		User user = userService.getCurrentUser();
-
+		String reponse="";
 		resp.setContentType("text/html");
-		resp.getWriter().println("<h2>Nantes-CommentBouger.com</h2>");
+		//reponse+="<h2>Nantes-CommentBouger.com</h2>";
 		
 		if (user != null) {
 			
@@ -31,11 +31,13 @@ public class LoginExampleServlet extends HttpServlet {
 
 		} else {
 
-			resp.getWriter().println(
+			reponse+=(
 					"N'hésite pas à te <a href='"
 							+ userService.createLoginURL(req.getRequestURI())
 							+ "'> connecter ! </a>");
 
 		}
+		
+		resp.getWriter().write("google;"+reponse);
 	}
 }

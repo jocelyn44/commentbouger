@@ -1,6 +1,14 @@
 var xmlHttp;// global instance of XMLHttpRequest
 var depChoisiTan="", arrChoisiTan="";
 
+function connexion(){
+	createXmlHttpRequest();
+	url=chemin+"loginservlet";
+	xmlHttp.open("GET", url);
+	xmlHttp.onreadystatechange=handleStateChange;
+	xmlHttp.send(null);
+	
+}
 
 function reqServ(quoi){
 	var dep, arr;
@@ -9,9 +17,11 @@ function reqServ(quoi){
 	arr=document.getElementById("arr").value;
 
 	if(quoi=="bus" && dep!="" && arr!=""){
-		reqPosTan("arr");
+		//reqPosTan("arr");
+		affItis("47.2034979,-1.5507195,checkPied,Marcher jusqu'a l'arret Wattignies;47.20396028,-1.54645317,checkTram,Prendre la ligne 2 vers Orvault-Grand Val jusqu'a Place du Cirque;47.20913625,-1.55022427,checkTram;47.21457190,-1.55587749,checkTram;47.21696213,-1.55705473,checkTram;47.21676964,-1.55704733,checkBus,Prendre la ligne C6 vers Hermeland jusqu'a Ambroise Pare;47.22038744,-1.57017375,checkBus;47.22224693,-1.58490511,checkBus;47.22899173,-1.59789479,checkBus;47.22908658,-1.60855912,checkBus;47.2318918,-1.6092175,checkPied,Marcher jusqu'a l'arret Allee CLAUDE ROUGET DE LISLE");
 	}
 	else{
+		$( "#affCompare" ).dialog( "open" );
 		//on convertie en coordonnees gps
 		var geocoder = new google.maps.Geocoder();
 		geocoder.geocode({
@@ -28,6 +38,8 @@ function reqServ(quoi){
 			var tmp;
 			tmp=document.getElementById("cache").innerHTML.split(';');
 			if(quoi=="bicloo"){
+				bicloo=true;
+				cntBicloo=0;
 				url=chemin+"ajax?&quoi="+quoi+"&dep="+tmp[0]+"&arr="+tmp[1];
 				xmlHttp.open("GET", url);
 				xmlHttp.onreadystatechange=handleStateChange;
@@ -35,6 +47,7 @@ function reqServ(quoi){
 			}
 			else{
 				multiChemin(tmp[0]+","+quoi+";"+tmp[1]+","+quoi);
+				majTempsTableau(tmp[0], tmp[1])
 			}
 		});
 	}
@@ -139,6 +152,9 @@ function handleStateChange()
           if(res[0]=="bus"){
         	  affItis(message.substring(4,message.length));
           }
+          if(res[0]=="google"){
+        	  affAdresse(message);
+          }
           if(res[0]=="adresse"){
         	  affAdresse(message);
           }
@@ -173,7 +189,8 @@ function affItis(repServ){
 	
 	resHTML+="<input type='button' value='Annuler' onclick=\"annuler('iti')\"/></p>";
 	popup.innerHTML=resHTML;
-	document.getElementById("choixItisTan").className="choixVis";
+	$( "#choixItisTan" ).dialog( "open" );
+	//document.getElementById("choixItisTan").className="choixVis";
 	arrChoisiTan="";
 	depChoisiTan="";
 }
