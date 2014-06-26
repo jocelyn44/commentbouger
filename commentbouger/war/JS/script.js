@@ -130,8 +130,6 @@ function majTempsTableau(start, end){
 	var mode= [google.maps.TravelMode.DRIVING, google.maps.TravelMode.BICYCLING, google.maps.TravelMode.WALKING];
 	var affRes = document.getElementById("affCompare");
 	affRes.innerHTML=("<table class=\"table table-striped\"><tr><th>Mode</th><th>Distance</th><th>Duree</th><th>Prix</th></tr>");
-	var duree;
-	var dist;
 	if(bicloo==true){
 		affRes.innerHTML=affRes.innerHTML.substring(0, affRes.innerHTML.length-16)+"<tr><td>Bicloo</td><td>"+distBic+" km</td><td>"+tempBicloo+" min</td><td>1€</td></tr></table>";
 	}
@@ -150,6 +148,8 @@ function majTempsTableau(start, end){
 				if(response.Pb.travelMode=="BICYCLING"){modeFR="Velo";}
 				if(response.Pb.travelMode=="WALKING"){modeFR="A pied";}
 				var prix;
+				var duree;
+				var dist;
 				dist = response.routes[0].legs[0].distance.text;
 				duree= response.routes[0].legs[0].duration.text;
 				if(modeFR=="Voiture"){

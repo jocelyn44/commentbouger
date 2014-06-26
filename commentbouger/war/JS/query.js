@@ -21,6 +21,7 @@ function reqServ(quoi){
 		//affItis("47.2034979,-1.5507195,checkPied,Marcher jusqu'a l'arret Wattignies;47.20396028,-1.54645317,checkTram,Prendre la ligne 2 vers Orvault-Grand Val jusqu'a Place du Cirque;47.20913625,-1.55022427,checkTram;47.21457190,-1.55587749,checkTram;47.21696213,-1.55705473,checkTram;47.21676964,-1.55704733,checkBus,Prendre la ligne C6 vers Hermeland jusqu'a Ambroise Pare;47.22038744,-1.57017375,checkBus;47.22224693,-1.58490511,checkBus;47.22899173,-1.59789479,checkBus;47.22908658,-1.60855912,checkBus;47.2318918,-1.6092175,checkPied,Marcher jusqu'a l'arret Allee CLAUDE ROUGET DE LISLE");
 	}
 	else{
+		$( "#affCompare" ).dialog( "destroy" );
 		$( "#affCompare" ).dialog( "open" );
 		//on convertie en coordonnees gps
 		var geocoder = new google.maps.Geocoder();
